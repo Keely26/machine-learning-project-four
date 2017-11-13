@@ -15,18 +15,19 @@ The k-means algorithm is a method of clustering data into k clusters, based on a
 can be partitioned and tend to follow a Gaussian model. Even if the data do not support these assumptions,
 k-means is simple to implement and often performs well. An algorithm for k-means is shown here.
 
-Algorithm 1 K-Means Clustering
-  1: function KMeans(D, k)
-  2:    initialize µ1, . . . , µk randomly
-  3:    repeat
-  4:      for all xi ∈ D do
-  5:        c ← arg minµj d(xi, µj )     d() is the distance between xi and µj .
-  6:        assign xi to the cluster c
-  7:      end for
-  8:      recalculate all µj based on new clusters
-  9:    until no change in µ1, . . . , µk
-  10:   return µ1, . . . , µk
-  11: end function
+```
+1:functionKMeans(D,k)
+2: initializeμ 1 ,...,μkrandomly
+3: repeat
+4: for allxi∈Ddo
+5: c←arg minμjd(xi,μj). d()is the distance betweenxiandμj.
+6: assignxito the clusterc
+7: end for
+8: recalculate allμjbased on new clusters
+9: untilno change inμ 1 ,...,μk
+10: returnμ 1 ,...,μk
+11:end function
+```
   
 DB-Scan
 An alternative approach to clustering examines the relative densities of the data. This approach has the
@@ -37,23 +38,25 @@ reflect a minimum number of points that must fall within some region. A Core poi
 at least M inP ts points within θ of that point. A Border point is one that falls within θ distance of some
 Core point. A Noise point is anything left over. An Algorithm for DB-Scan is shown here, assuming all
 points have already been categorized.
+```
+Algorithm 2DB-Scan
+1:functionDB-Scan(D)
+2: currClustLbl← 1
+3: for allp∈Coredodo
+4: ifclustLbl[p] =“Unknown”then
+5: currClustLbl←currClustLbl+ 1
+6: clustLbl[p]←currClustLbl
+7: end if
+8: for allp′∈θ-neighborhooddo
+9: ifclustLbl[p′] =“Unknown”then
+10: clustLbl[p′]←currClustLbl
+11: end if
+12: end for
+13: end for
+14: returnclustLbl
+15:end function
 
-Algorithm 2 DB-Scan
-  1: function DB-Scan(D)
-  2:    currClustLbl ← 1
-  3:    for all p ∈ Core do do
-  4:        if clustLbl[p] = “Unknown” then
-  5:            currClustLbl ← currClustLbl + 1
-  6:            clustLbl[p] ← currClustLbl
-  7:        end if
-  8:        for all p0∈ θ-neighborhood do
-  9:            if clustLbl[p0] = “Unknown” then
-  10:               clustLbl[p0] ← currClustLbl
-  11:           end if
-  12:       end for
-  13:     end for
-  14:     return clustLbl
-  15: end function
+```
   
 Your assignment consists of the following steps:
 1. Prepare a design document addressing the design of the various clustering algorithms. Be sure to

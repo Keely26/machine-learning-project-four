@@ -1,8 +1,8 @@
 code section   | member
 ----------------------------
 k-means        | karen
-Competitive    | karen
+Competitive    | keely
 DBscan         | zach
 PSO            | zach
-ACO            | keely
+ACO            | karen
 test udpdate   | keely

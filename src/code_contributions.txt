@@ -1,0 +1,9 @@
+code section   | member
+----------------------------
+k-means        | karen
+Competitive    | keely
+DBscan         | zach
+PSO            | karen
+ACO            | karen
+test udpdate   | keely
+architecture   | zach

@@ -1,3 +1,6 @@
+import java.util.ArrayList;
+import java.util.List;
+
 public class DBScan implements IDataClusterer {
 
     private final int minPoints;
@@ -13,11 +16,30 @@ public class DBScan implements IDataClusterer {
         assert dataset != null : "Dataset must be supplied.";
 
         dataset.stream()
-                .filter(sample -> sample.cluster == 0)
+                .filter(sample -> sample.cluster > 0)
                 .forEach((Sample sample) -> {
-                    do {
-                        System.out.println("foo");
-                    } while (true);
+                    List<Sample> neighbors = getNeighbors(sample, dataset);
+                    if (neighbors.size() < minPoints) {
+                        sample.cluster = -1;
+                        return;
+                    } else {
+                        // Something about seeds
+                    }
                 });
+    }
+
+    /**
+     * Collect the list of data points within epsilon of the target point
+     */
+    private List<Sample> getNeighbors(Sample sample, Dataset dataset) {
+        List<Sample> neighbors = new ArrayList<>();
+
+        for (int i = 0; i < sample.distances.size(); i++) {
+            if (sample.distances.get(i) < epsilon) {
+                neighbors.add(dataset.get(i));
+            }
+        }
+
+        return neighbors;
     }
 }

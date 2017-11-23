@@ -8,5 +8,10 @@ public class Tester {
 
         Dataset dataset = DatasetBuilder.buildDataSet(dataFile);
         dataset.forEach(datum -> System.out.println(Arrays.toString(datum.features)));
+
+        IDataClusterer dbScan = ClustererFactory.buildClusterer(ClustererType.DBScan);
+        dbScan.cluster(dataset);
+
+        RenderingEngine.render(dataset, ClustererType.DBScan);
     }
 }

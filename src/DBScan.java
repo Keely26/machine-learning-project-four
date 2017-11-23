@@ -1,45 +1,61 @@
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class DBScan implements IDataClusterer {
 
-    private final int minPoints;
     private final double epsilon;
+    private int minPoints;
+    private int clusterIndex;
 
-    public DBScan(int minPoints, double epsilon) {
+    DBScan(int minPoints, double maxDistance) {
         this.minPoints = minPoints;
-        this.epsilon = epsilon;
+        this.epsilon = maxDistance;
+        this.clusterIndex = 1;
     }
 
     @Override
     public void cluster(Dataset dataset) {
-        assert dataset != null : "Dataset must be supplied.";
+        for (Sample sample : dataset) {
 
-        dataset.stream()
-                .filter(sample -> sample.cluster > 0)
-                .forEach((Sample sample) -> {
-                    List<Sample> neighbors = getNeighbors(sample, dataset);
-                    if (neighbors.size() < minPoints) {
-                        sample.cluster = -1;
-                        return;
-                    } else {
-                        // Something about seeds
+            if (sample.getCluster() == 0) {                     // Check the point hasn't been clustered
+
+                List<Sample> neighbours = getNeighbors(sample, dataset);
+                if (neighbours.size() >= minPoints) {
+                    for (int j = 0; j < neighbours.size(); j++) {
+                        Sample neighbor = neighbours.get(j);
+
+                        if (neighbor.getCluster() == 0) {       // Check the point hasn't been clustered
+                            List<Sample> individualNeighbours = getNeighbors(neighbor, dataset);
+                            if (individualNeighbours.size() >= minPoints) {
+                                neighbours = mergeClusters(neighbours, individualNeighbours);
+                            }
+                        }
                     }
-                });
+                    // Set cluster
+                    neighbours.forEach(element -> element.setCluster(clusterIndex));
+                    clusterIndex++;
+                }
+            }
+        }
     }
 
     /**
      * Collect the list of data points within epsilon of the target point
      */
     private List<Sample> getNeighbors(Sample sample, Dataset dataset) {
-        List<Sample> neighbors = new ArrayList<>();
+        return dataset.parallelStream()
+                .filter(datum -> sample.computeDistance(datum) < this.epsilon)
+                .collect(Collectors.toList());
+    }
 
-        for (int i = 0; i < sample.distances.size(); i++) {
-            if (sample.distances.get(i) < epsilon) {
-                neighbors.add(dataset.get(i));
-            }
-        }
+    private List<Sample> mergeClusters(List<Sample> listOne, List<Sample> listTwo) {
+        List<Sample> distinct = new ArrayList<>(listOne);
 
-        return neighbors;
+        listTwo.parallelStream()
+                .filter(element -> !distinct.contains(element))
+                .forEach(distinct::add);
+
+        return distinct;
     }
 }

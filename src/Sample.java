@@ -1,10 +1,12 @@
+import java.util.List;
+
 public class Sample {
 
-    public final double[] inputs;
-    public final double[] outputs;
+    public final double[] features;
+    public int cluster;
+    public List<Double> distances;
 
-    public Sample(double[] inputs, double outputs[]) {
-        this.inputs = inputs;
-        this.outputs = outputs;
+    public Sample(double[] features) {
+        this.features = features;
     }
 }

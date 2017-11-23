@@ -1,3 +1,5 @@
+import java.util.List;
+
 public interface IDataClusterer {
-    void cluster(Dataset dataset);
+    List<Cluster> cluster(Dataset dataset);
 }

@@ -1,3 +1,5 @@
+import java.util.List;
+
 public class KMeans implements IDataClusterer {
 
     public KMeans() {
@@ -5,7 +7,7 @@ public class KMeans implements IDataClusterer {
     }
 
     @Override
-    public void cluster(Dataset dataset) {
-
+    public List<Cluster> cluster(Dataset dataset) {
+        return null;
     }
 }

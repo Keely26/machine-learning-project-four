@@ -1,4 +1,5 @@
 import java.util.Arrays;
+import java.util.List;
 
 public class Tester {
 
@@ -10,8 +11,16 @@ public class Tester {
         dataset.forEach(datum -> System.out.println(Arrays.toString(datum.features)));
 
         IDataClusterer dbScan = ClustererFactory.buildClusterer(ClustererType.DBScan);
-        dbScan.cluster(dataset);
+        List<Cluster> clusters = dbScan.cluster(dataset);
 
-        RenderingEngine.render(dataset, ClustererType.DBScan);
+        printClusterStats(clusters, ClustererType.DBScan);
+    }
+
+    private static void printClusterStats(List<Cluster> clusters, ClustererType type) {
+        System.out.println(type.toString());
+        for (Cluster cluster : clusters) {
+            System.out.println("Cluster: " + cluster.clusterId + ", count: " + cluster.size());
+        }
+        System.out.println();
     }
 }

@@ -1,3 +1,5 @@
+import java.util.List;
+
 public class ACOClusterer implements IDataClusterer {
 
     public ACOClusterer() {
@@ -5,7 +7,7 @@ public class ACOClusterer implements IDataClusterer {
     }
 
     @Override
-    public void cluster(Dataset dataset) {
-
+    public List<Cluster> cluster(Dataset dataset) {
+        return null;
     }
 }

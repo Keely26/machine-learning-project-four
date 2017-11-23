@@ -1,3 +1,5 @@
+import java.util.List;
+
 public class CompetitiveLearning implements IDataClusterer {
 
     public CompetitiveLearning() {
@@ -5,7 +7,7 @@ public class CompetitiveLearning implements IDataClusterer {
     }
 
     @Override
-    public void cluster(Dataset dataset) {
-
+    public List<Cluster> cluster(Dataset dataset) {
+        return null;
     }
 }

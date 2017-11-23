@@ -1,3 +1,5 @@
+import java.util.List;
+
 public class PSOClusterer implements IDataClusterer {
 
     private final int numParticles;
@@ -7,7 +9,7 @@ public class PSOClusterer implements IDataClusterer {
     }
 
     @Override
-    public void cluster(Dataset dataset) {
-
+    public List<Cluster> cluster(Dataset dataset) {
+        return null;
     }
 }

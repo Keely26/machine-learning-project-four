@@ -15,11 +15,11 @@ public class DBScan implements IDataClusterer {
     }
 
     @Override
-    public void cluster(Dataset dataset) {
+    public List<Cluster> cluster(Dataset dataset) {
+        List<Cluster> clusters = new ArrayList<>();
+
         for (Sample sample : dataset) {
-
             if (sample.getCluster() == 0) {                     // Check the point hasn't been clustered
-
                 List<Sample> neighbours = getNeighbors(sample, dataset);
                 if (neighbours.size() >= minPoints) {
                     for (int j = 0; j < neighbours.size(); j++) {
@@ -34,10 +34,11 @@ public class DBScan implements IDataClusterer {
                     }
                     // Set cluster
                     neighbours.forEach(element -> element.setCluster(clusterIndex));
-                    clusterIndex++;
+                    clusters.add(new Cluster(neighbours, clusterIndex++));
                 }
             }
         }
+        return clusters;
     }
 
     /**

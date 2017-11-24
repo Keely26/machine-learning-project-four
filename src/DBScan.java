@@ -2,7 +2,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class DBScan implements IDataClusterer {
+public class DBScan extends ClustererBase {
 
     private final double epsilon;
     private int minPoints;

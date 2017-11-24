@@ -1,8 +1,8 @@
 import java.util.List;
 
-public class CompetitiveLearning implements IDataClusterer {
+public class CompetitiveLearning extends ClustererBase {
 
-    public CompetitiveLearning() {
+    CompetitiveLearning() {
 
     }
 

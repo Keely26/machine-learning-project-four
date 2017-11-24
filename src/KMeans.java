@@ -1,8 +1,8 @@
 import java.util.List;
 
-public class KMeans implements IDataClusterer {
+public class KMeans extends ClustererBase {
 
-    public KMeans() {
+    KMeans() {
 
     }
 

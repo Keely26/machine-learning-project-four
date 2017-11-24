@@ -1,8 +1,8 @@
 import java.util.List;
 
-public class ACOClusterer implements IDataClusterer {
+public class ACOClusterer extends ClustererBase {
 
-    public ACOClusterer() {
+    ACOClusterer() {
 
     }
 

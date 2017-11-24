@@ -1,6 +1,6 @@
 import java.util.List;
 
-public class PSOClusterer implements IDataClusterer {
+public class PSOClusterer extends ClustererBase {
 
     private final int numParticles;
 

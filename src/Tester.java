@@ -13,7 +13,7 @@ public class Tester {
         IDataClusterer dbScan = ClustererFactory.buildClusterer(ClustererType.DBScan);
         List<Cluster> clusters = dbScan.cluster(dataset);
 
-        printClusterStats(clusters, ClustererType.DBScan);
+        // printClusterStats(clusters, ClustererType.DBScan);
     }
 
     private static void printClusterStats(List<Cluster> clusters, ClustererType type) {

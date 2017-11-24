@@ -38,6 +38,8 @@ public class DBScan extends ClustererBase {
                 }
             }
         }
+        System.out.println("DBSCAN");
+        evaluateClusters(clusters);
         return clusters;
     }
 

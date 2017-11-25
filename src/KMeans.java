@@ -1,13 +1,13 @@
-import java.util.List;
-
 public class KMeans extends ClustererBase {
 
-    KMeans() {
+    private final int numClusters;
 
+    KMeans(int numClusters) {
+        this.numClusters = numClusters;
     }
 
     @Override
-    public List<Cluster> cluster(Dataset dataset) {
+    public Clustering cluster(Dataset dataset) {
         return null;
     }
 }

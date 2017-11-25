@@ -25,7 +25,7 @@ public class DatasetBuilder {
 
         Dataset dataset = new Dataset();
         lines.forEach(line -> dataset.add(
-                new Sample(Arrays.stream(COMMA_DELIMITER
+                new Datum(Arrays.stream(COMMA_DELIMITER
                         .split(line))
                         .mapToDouble(Double::parseDouble)
                         .toArray()))

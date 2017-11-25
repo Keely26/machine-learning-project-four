@@ -1,4 +1,3 @@
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -15,18 +14,18 @@ public class DBScan extends ClustererBase {
     }
 
     @Override
-    public List<Cluster> cluster(Dataset dataset) {
-        List<Cluster> clusters = new ArrayList<>();
+    public Clustering cluster(Dataset dataset) {
+        Clustering clustering = new Clustering();
 
-        for (Sample sample : dataset) {
+        for (Datum sample : dataset) {
             if (sample.getCluster() == 0) {                     // Check the point hasn't been clustered
-                List<Sample> neighbours = getNeighbors(sample, dataset);
+                Dataset neighbours = getNeighbors(sample, dataset);
                 if (neighbours.size() >= minPoints) {
                     for (int j = 0; j < neighbours.size(); j++) {
-                        Sample neighbor = neighbours.get(j);
+                        Datum neighbor = neighbours.get(j);
 
                         if (neighbor.getCluster() == 0) {       // Check the point hasn't been clustered
-                            List<Sample> individualNeighbours = getNeighbors(neighbor, dataset);
+                            List<Datum> individualNeighbours = getNeighbors(neighbor, dataset);
                             if (individualNeighbours.size() >= minPoints) {
                                 neighbours = mergeClusters(neighbours, individualNeighbours);
                             }
@@ -34,26 +33,26 @@ public class DBScan extends ClustererBase {
                     }
                     // Set cluster
                     neighbours.forEach(element -> element.setCluster(clusterIndex));
-                    clusters.add(new Cluster(neighbours, clusterIndex++));
+                    clustering.add(new Cluster(neighbours, clusterIndex++));
                 }
             }
         }
         System.out.println("DBSCAN");
-        evaluateClusters(clusters);
-        return clusters;
+        evaluateClusters(clustering);
+        return clustering;
     }
 
     /**
      * Collect the list of data points within epsilon of the target point
      */
-    private List<Sample> getNeighbors(Sample sample, Dataset dataset) {
+    private Dataset getNeighbors(Datum sample, Dataset dataset) {
         return dataset.parallelStream()
                 .filter(datum -> sample.computeDistance(datum) < this.epsilon)
-                .collect(Collectors.toList());
+                .collect(Collectors.toCollection(Dataset::new));
     }
 
-    private List<Sample> mergeClusters(List<Sample> listOne, List<Sample> listTwo) {
-        List<Sample> distinct = new ArrayList<>(listOne);
+    private Dataset mergeClusters(List<Datum> listOne, List<Datum> listTwo) {
+        Dataset distinct = new Dataset(listOne);
 
         listTwo.parallelStream()
                 .filter(element -> !distinct.contains(element))

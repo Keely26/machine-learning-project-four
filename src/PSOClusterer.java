@@ -1,15 +1,15 @@
-import java.util.List;
-
 public class PSOClusterer extends ClustererBase {
 
+    private final int numClusters;
     private final int numParticles;
 
-    public PSOClusterer(int numParticles) {
+    PSOClusterer(int numClusters, int numParticles) {
+        this.numClusters = numClusters;
         this.numParticles = numParticles;
     }
 
     @Override
-    public List<Cluster> cluster(Dataset dataset) {
+    public Clustering cluster(Dataset dataset) {
         return null;
     }
 }

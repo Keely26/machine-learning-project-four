@@ -1,5 +1,3 @@
-import java.util.List;
-
 public class CompetitiveLearning extends ClustererBase {
 
     CompetitiveLearning() {
@@ -7,7 +5,7 @@ public class CompetitiveLearning extends ClustererBase {
     }
 
     @Override
-    public List<Cluster> cluster(Dataset dataset) {
+    public Clustering cluster(Dataset dataset) {
         return null;
     }
 }

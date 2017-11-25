@@ -1,11 +1,26 @@
-import java.util.ArrayList;
-import java.util.List;
+public class Cluster extends Dataset {
 
-public class Cluster extends ArrayList<Sample> {
-    final int clusterId;
+    private int clusterId;
+    private double[] clusterCenter;
 
-    public Cluster(List<Sample> elements, int clusterId) {
+    public Cluster(Dataset elements, int clusterId) {
         super(elements);
         this.clusterId = clusterId;
+    }
+
+    public int getClusterId() {
+        return clusterId;
+    }
+
+    public void setClusterId(int clusterId) {
+        this.clusterId = clusterId;
+    }
+
+    public double[] getClusterCenter() {
+        return clusterCenter;
+    }
+
+    public void setClusterCenter(double[] clusterCenter) {
+        this.clusterCenter = clusterCenter;
     }
 }

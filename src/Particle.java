@@ -1,23 +1,23 @@
 public class Particle {
 
-    private double[] position;
+    private Clustering bestPosition;
+    private Clustering position;
     private double[] velocity;
 
-    private double[] bestPosition;
+    public Particle() {
+    }
 
-    public Particle() {}
-
-    public Particle(double[] position, double[] velocity) {
+    public Particle(Clustering position, double[] velocity) {
         this.position = position;
         this.bestPosition = position;
         this.velocity = velocity;
     }
 
-    public double[] getPosition() {
+    public Clustering getPosition() {
         return position;
     }
 
-    public void setPosition(double[] position) {
+    public void setPosition(Clustering position) {
         this.position = position;
     }
 
@@ -29,11 +29,11 @@ public class Particle {
         this.velocity = velocity;
     }
 
-    public double[] getBestPosition() {
+    public Clustering getBestPosition() {
         return bestPosition;
     }
 
-    public void setBestPosition(double[] bestPosition) {
+    public void setBestPosition(Clustering bestPosition) {
         this.bestPosition = bestPosition;
     }
 }

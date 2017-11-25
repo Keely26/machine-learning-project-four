@@ -1,19 +1,19 @@
-public class Sample {
+public class Datum {
 
     public final double[] features;
     private int cluster;
 
-    public Sample(double[] features) {
+    public Datum(double[] features) {
         this.features = features;
     }
 
-    public double computeDistance(Sample sample) {
-        assert sample.features.length == this.features.length : "Non-congruent feature lengths!";
+    public double computeDistance(Datum datum) {
+        assert datum.features.length == this.features.length : "Non-congruent feature lengths!";
 
         double distance = 0.0;
 
         for (int i = 0; i < features.length; i++) {
-            distance += Math.abs(features[i] - sample.features[i]);
+            distance += Math.abs(features[i] - datum.features[i]);
         }
 
         return distance;

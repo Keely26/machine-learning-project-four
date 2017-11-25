@@ -7,7 +7,7 @@ public class ACOClusterer extends ClustererBase {
     }
 
     @Override
-    public List<Cluster> cluster(Dataset dataset) {
+    public Clustering cluster(Dataset dataset) {
         return null;
     }
 }

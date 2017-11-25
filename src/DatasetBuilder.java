@@ -23,15 +23,12 @@ public class DatasetBuilder {
         File file = new File(PATH.concat(type.toString()).concat(CSV));
         List<String> lines = Objects.requireNonNull(getFileStream(file)).collect(Collectors.toList());
 
-        Dataset dataset = new Dataset();
-        lines.forEach(line -> dataset.add(
-                new Datum(Arrays.stream(COMMA_DELIMITER
+        return lines.stream()
+                .map(line -> new Datum(Arrays.stream(COMMA_DELIMITER
                         .split(line))
                         .mapToDouble(Double::parseDouble)
                         .toArray()))
-        );
-
-        return dataset;
+                .collect(Collectors.toCollection(Dataset::new));
     }
 
     private static Stream<String> getFileStream(File file) {

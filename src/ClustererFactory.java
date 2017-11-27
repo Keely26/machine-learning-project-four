@@ -32,7 +32,7 @@ public class ClustererFactory {
             case CompetitiveNetwork:
                 return new CompetitiveLearning(numInputNeurons, numClusters, learningRate);
             case DBSCAN:
-                return new DBScan(minPoints, epsilon);
+                return new DBSCAN(minPoints, epsilon);
             case kMeans:
                 return new KMeans(numClusters);
             default:

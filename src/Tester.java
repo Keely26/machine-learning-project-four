@@ -19,7 +19,7 @@ public class Tester {
         Dataset retinopathyDataset = DatasetBuilder.buildDataSet(DatasetType.Retinopathy);
 
         /* Cluster */
-        IDataClusterer dbScan = ClustererFactory.buildClusterer(ClustererType.DBScan);
+        IDataClusterer dbScan = ClustererFactory.buildClusterer(ClustererType.DBSCAN);
         Clustering glassClustering = dbScan.cluster(glassDataset);
         Clustering banknoteClustering = dbScan.cluster(banknoteDataset);
         //  Clustering irisClustering = dbScan.cluster(irisDataset);

@@ -2,20 +2,36 @@ import Clusterers.*;
 
 public class ClustererFactory {
 
+    /* Universal Parameters */
     private static final int numClusters = 4;
+
+    /* ACO Parameters */
+    private static final int numAnts = 50;
+    private static final double k1 = 2;
+    private static final double k2 = 2;
+    private static final double radius = 10.0;
+
+    /* PSO Parameters */
     private static final int numParticles = 100;
+
+    /* Competitive Network Parameters */
+    private static final int numInputNeurons = 10;
+    private static final double learningRate = 0.2;
+
+    /* DBSCAN Parameters */
     private static final int minPoints = 8;
     private static final double epsilon = 10.0;
+
 
     public static IDataClusterer buildClusterer(ClustererType type) {
         switch (type) {
             case ACOClusterer:
-                return new ACOClusterer();
+                return new ACOClusterer(numAnts, k1, k2, radius);
             case PSOClusterer:
                 return new PSOClusterer(numClusters, numParticles);
             case CompetitiveNetwork:
-                return new CompetitiveLearning();
-            case DBScan:
+                return new CompetitiveLearning(numInputNeurons, numClusters, learningRate);
+            case DBSCAN:
                 return new DBScan(minPoints, epsilon);
             case kMeans:
                 return new KMeans(numClusters);

@@ -1,4 +1,9 @@
-import java.util.Arrays;
+import Clusterers.ClustererType;
+import Clusterers.IDataClusterer;
+import Data.Cluster;
+import Data.Clustering;
+import Data.Dataset;
+import Data.DatasetType;
 
 public class Tester {
 
@@ -6,13 +11,20 @@ public class Tester {
 
     public static void main(String[] args) {
 
-        Dataset dataset = DatasetBuilder.buildDataSet(dataFile);
-        dataset.forEach(datum -> System.out.println(Arrays.toString(datum.features)));
+        /* Build datasets */
+        Dataset glassDataset = DatasetBuilder.buildDataSet(DatasetType.Glass);
+        Dataset banknoteDataset = DatasetBuilder.buildDataSet(DatasetType.Banknote);
+        Dataset irisDataset = DatasetBuilder.buildDataSet(DatasetType.Iris);
+        Dataset parkinsonsDataset = DatasetBuilder.buildDataSet(DatasetType.Parkinsons);
+        Dataset retinopathyDataset = DatasetBuilder.buildDataSet(DatasetType.Retinopathy);
 
+        /* Cluster */
         IDataClusterer dbScan = ClustererFactory.buildClusterer(ClustererType.DBScan);
-        Clustering clusters = dbScan.cluster(dataset);
-
-        // printClusterStats(clusters, ClustererType.DBScan);
+        Clustering glassClustering = dbScan.cluster(glassDataset);
+        Clustering banknoteClustering = dbScan.cluster(banknoteDataset);
+        //  Clustering irisClustering = dbScan.cluster(irisDataset);
+        // Clustering parkinsonsClustering = dbScan.cluster(parkinsonsDataset);
+        // Clustering retinopathyClustering = dbScan.cluster(retinopathyDataset);
     }
 
     private static void printClusterStats(Clustering clusters, ClustererType type) {
@@ -21,5 +33,9 @@ public class Tester {
             System.out.println("Cluster: " + cluster.getClusterId() + ", count: " + cluster.size());
         }
         System.out.println();
+    }
+
+    private static void resetDataset(Dataset dataset) {
+        dataset.parallelStream().forEach(datum -> datum.setCluster(0));
     }
 }

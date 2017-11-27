@@ -1,3 +1,5 @@
+package Data;
+
 public class Datum {
 
     public final double[] features;

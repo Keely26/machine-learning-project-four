@@ -1,13 +1,20 @@
+package Clusterers;
+
+import Data.Cluster;
+import Data.Clustering;
+import Data.Dataset;
+import Data.Datum;
+
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class DBScan extends ClustererBase {
+public class DBScan implements IDataClusterer {
 
     private final double epsilon;
-    private int minPoints;
+    private final int minPoints;
     private int clusterIndex;
 
-    DBScan(int minPoints, double maxDistance) {
+    public DBScan(int minPoints, double maxDistance) {
         this.minPoints = minPoints;
         this.epsilon = maxDistance;
         this.clusterIndex = 1;
@@ -16,6 +23,7 @@ public class DBScan extends ClustererBase {
     @Override
     public Clustering cluster(Dataset dataset) {
         Clustering clustering = new Clustering();
+        clusterIndex = 0;
 
         for (Datum sample : dataset) {
             if (sample.getCluster() == 0) {                     // Check the point hasn't been clustered
@@ -38,7 +46,7 @@ public class DBScan extends ClustererBase {
             }
         }
         System.out.println("DBSCAN");
-        evaluateClusters(clustering);
+        clustering.evaluateClusters();
         return clustering;
     }
 

@@ -1,3 +1,5 @@
+import Clusterers.*;
+
 public class ClustererFactory {
 
     private static final int numClusters = 4;

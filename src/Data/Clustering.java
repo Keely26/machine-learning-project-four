@@ -1,18 +1,22 @@
-public class ClustererBase implements IDataClusterer {
+package Data;
 
-    protected void evaluateClusters(Clustering clusters) {
+import java.util.ArrayList;
+
+public class Clustering extends ArrayList<Cluster> {
+
+    public void evaluateClusters() {
         // Calculate average intra-cluster distance (lower is better)
         double intraSum = 0.0;
-        for (Cluster cluster : clusters) {
+        for (Cluster cluster : this) {
             double clusterDistance = getAvgIntraClusterDistance(cluster);
             System.out.println("Cluster " + cluster.getClusterId() + " intra-cluster distance: " + clusterDistance);
             intraSum += clusterDistance;
         }
-        intraSum /= clusters.size();
+        intraSum /= this.size();
 
         // Calculate average inter-cluster distance (higher is better)
         Dataset clusterCenters = new Dataset();
-        clusters.forEach(cluster -> clusterCenters.add(getClusterCenter(cluster)));
+        this.forEach(cluster -> clusterCenters.add(getClusterCenter(cluster)));
 
         double interSum = 0.0;
         for (Datum center1 : clusterCenters) {
@@ -55,12 +59,5 @@ public class ClustererBase implements IDataClusterer {
         }
 
         return new Datum(avgVector);
-    }
-
-
-    @Override
-    public Clustering cluster(Dataset dataset) {
-        assert false : "Base class cannot be used to cluster!";
-        return null;
     }
 }

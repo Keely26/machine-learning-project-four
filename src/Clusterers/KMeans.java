@@ -1,8 +1,13 @@
-public class KMeans extends ClustererBase {
+package Clusterers;
+
+import Data.Clustering;
+import Data.Dataset;
+
+public class KMeans implements IDataClusterer {
 
     private final int numClusters;
 
-    KMeans(int numClusters) {
+    public KMeans(int numClusters) {
         this.numClusters = numClusters;
     }
 

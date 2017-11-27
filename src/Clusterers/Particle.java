@@ -1,3 +1,7 @@
+package Clusterers;
+
+import Data.Clustering;
+
 public class Particle {
 
     private Clustering bestPosition;

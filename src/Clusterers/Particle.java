@@ -4,7 +4,7 @@ import Data.Clustering;
 
 public class Particle {
 
-    private Clustering bestPosition;
+    private Clustering personalBest;
     private Clustering position;
     private double[] velocity;
 
@@ -13,7 +13,7 @@ public class Particle {
 
     public Particle(Clustering position, double[] velocity) {
         this.position = position;
-        this.bestPosition = position;
+        this.personalBest = position;
         this.velocity = velocity;
     }
 
@@ -33,11 +33,11 @@ public class Particle {
         this.velocity = velocity;
     }
 
-    public Clustering getBestPosition() {
-        return bestPosition;
+    public Clustering getPersonalBest() {
+        return personalBest;
     }
 
-    public void setBestPosition(Clustering bestPosition) {
-        this.bestPosition = bestPosition;
+    public void setPersonalBest(Clustering bestPosition) {
+        this.personalBest = bestPosition;
     }
 }

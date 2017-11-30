@@ -4,43 +4,43 @@ import java.util.ArrayList;
 
 public class Clustering extends ArrayList<Cluster> {
 
-    public void evaluateClusters() {
+    private double clusterQuality = Double.MAX_VALUE;
+
+    public Clustering() {
+
+    }
+
+    public double evaluateClusters() {
         // Calculate average intra-cluster distance (lower is better)
-        double intraSum = 0.0;
-        for (Cluster cluster : this) {
-            double clusterDistance = getAvgIntraClusterDistance(cluster);
-            System.out.println("Cluster " + cluster.getClusterId() + " intra-cluster distance: " + clusterDistance);
-            intraSum += clusterDistance;
-        }
-        intraSum /= this.size();
+        double intraSum = this.stream().mapToDouble(this::getAvgIntraClusterDistance).sum() / this.size();
 
         // Calculate average inter-cluster distance (higher is better)
         Dataset clusterCenters = new Dataset();
         this.forEach(cluster -> clusterCenters.add(getClusterCenter(cluster)));
 
-        double interSum = 0.0;
-        for (Datum center1 : clusterCenters) {
-            for (Datum center2 : clusterCenters) {
-                if (!center1.equals(center2)) {
-                    interSum += center1.computeDistance(center2);
-                }
-            }
-            interSum /= clusterCenters.size() - 1;
-        }
+        double interSum = clusterCenters.stream()
+                .mapToDouble(center1 -> clusterCenters.stream()
+                        .filter(center2 -> !center1.equals(center2))
+                        .mapToDouble(center1::computeDistance)
+                        .sum() / clusterCenters.size() - 1)
+                .sum();
 
-        System.out.println("Avg Inter-cluster distance: " + interSum);
-        System.out.println("Cluster quality: " + intraSum / interSum);
+        this.clusterQuality = intraSum / interSum;
+        System.out.println("Cluster quality: " + this.clusterQuality);
+
+        return this.clusterQuality;
+    }
+
+    public double getClusterQuality() {
+        return this.clusterQuality;
     }
 
     private double getAvgIntraClusterDistance(Cluster cluster) {
-        double interClusterDistance = 0.0;
-        for (Datum sample : cluster) {
-            for (Datum neighbor : cluster) {
-                interClusterDistance += sample.computeDistance(neighbor);
-            }
-            interClusterDistance /= cluster.size();
-        }
-        return interClusterDistance;
+        return cluster.stream()
+                .mapToDouble(sample -> cluster.stream()
+                        .mapToDouble(sample::computeDistance)
+                        .sum() / cluster.size())
+                .sum();
     }
 
     private Datum getClusterCenter(Cluster cluster) {

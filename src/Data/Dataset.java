@@ -1,9 +1,6 @@
 package Data;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 
 public class Dataset extends ArrayList<Datum> {
 
@@ -13,6 +10,10 @@ public class Dataset extends ArrayList<Datum> {
 
     public Dataset(List<Datum> data) {
         super(data);
+    }
+
+    public int getFeatureSize() {
+        return this.get(0).features.length;
     }
 
     public void shuffle() {

@@ -13,6 +13,7 @@ public class ClustererFactory {
 
     /* PSO Parameters */
     private static final int numParticles = 100;
+    private static final int maxIterations = 10000;
 
     /* Competitive Network Parameters */
     private static final int numInputNeurons = 10;
@@ -28,7 +29,7 @@ public class ClustererFactory {
             case ACOClusterer:
                 return new ACOClusterer(numAnts, k1, k2, radius);
             case PSOClusterer:
-                return new PSOClusterer(numClusters, numParticles);
+                return new PSOClusterer(numClusters, numParticles, maxIterations);
             case CompetitiveNetwork:
                 return new CompetitiveLearning(numInputNeurons, numClusters, learningRate);
             case DBSCAN:

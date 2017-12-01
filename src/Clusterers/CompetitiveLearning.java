@@ -20,7 +20,17 @@ public class CompetitiveLearning implements IDataClusterer {
 
     @Override
     public Clustering cluster(Dataset dataset) {
-        return null;
+        Clustering clustering= new Clustering();
+
+
+        //enforce that the size of the input layer is equal to the number'
+        //of features in the dataset
+        if(!inputs.equals(dataset.getFeatureSize())){
+            initializeNetwork(dataset.getFeatureSize(), outputs.size());
+        }
+
+
+        return clustering;
     }
 
     private void initializeNetwork(int inputs, int outputs) {

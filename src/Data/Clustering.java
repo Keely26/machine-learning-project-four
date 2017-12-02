@@ -17,13 +17,15 @@ public class Clustering extends ArrayList<Cluster> {
         // Calculate average inter-cluster distance (higher is better)
         Dataset clusterCenters = new Dataset();
         this.forEach(cluster -> clusterCenters.add(getClusterCenter(cluster)));
+        clusterCenters.computeDistances();
 
-        double interSum = clusterCenters.stream()
-                .mapToDouble(center1 -> clusterCenters.stream()
-                        .filter(center2 -> !center1.equals(center2))
-                        .mapToDouble(center1::computeDistance)
-                        .sum() / clusterCenters.size() - 1)
-                .sum();
+        double interSum = 0.0;
+        for (int i = 0; i < clusterCenters.size(); i++) {
+            for (int j = 0; j < clusterCenters.size(); j++) {
+                interSum = clusterCenters.getDistance(clusterCenters.get(i), clusterCenters.get(j));
+            }
+        }
+        interSum /= (Math.pow(clusterCenters.size(), 2));
 
         this.clusterQuality = intraSum / interSum;
         System.out.println("Cluster quality: " + this.clusterQuality);
@@ -36,11 +38,15 @@ public class Clustering extends ArrayList<Cluster> {
     }
 
     private double getAvgIntraClusterDistance(Cluster cluster) {
-        return cluster.stream()
-                .mapToDouble(sample -> cluster.stream()
-                        .mapToDouble(sample::computeDistance)
-                        .sum() / cluster.size())
-                .sum();
+        double avgDistance = 0.0;
+        for (int i = 0; i < cluster.size(); i++) {
+            for (int j = 0; j < cluster.size(); j++) {
+                if (i != j) {
+                    avgDistance += cluster.getDistance(cluster.get(i), cluster.get(j));
+                }
+            }
+        }
+        return avgDistance / Math.pow(cluster.size(), 2);
     }
 
     private Datum getClusterCenter(Cluster cluster) {

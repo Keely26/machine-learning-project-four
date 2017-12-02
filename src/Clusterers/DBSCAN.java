@@ -19,33 +19,36 @@ public class DBSCAN implements IDataClusterer {
 
     @Override
     public Clustering cluster(Dataset dataset) {
+        dataset.computeDistances();
         Clustering clustering = new Clustering();
+        this.clusterIndex = 0;
+
+        // Mark all core points
         findCorePoints(dataset);
 
-        clusterIndex = 0;
-
-        for (Datum sample : dataset) {
-            if (sample.getCluster() == 0) {                     // Check the point hasn't been clustered
-                Dataset neighbours = getNeighbors(sample, dataset);
-                if (neighbours.size() >= minPoints) {
-                    for (int j = 0; j < neighbours.size(); j++) {
-                        Datum neighbor = neighbours.get(j);
-
-                        if (neighbor.getCluster() == 0) {       // Check the point hasn't been clustered
-                            List<Datum> individualNeighbours = getNeighbors(neighbor, dataset);
-                            if (individualNeighbours.size() >= minPoints) {
-                                neighbours = mergeClusters(neighbours, individualNeighbours);
-                            }
-                        }
-                    }
-                    // Set cluster
-                    neighbours.forEach(element -> element.setCluster(clusterIndex));
-                    clustering.add(new Cluster(neighbours, clusterIndex++));
-                }
-            }
-        }
-        System.out.println("DBSCAN");
-        clustering.evaluateClusters();
+        dataset.forEach(datum -> System.out.println(datum.isCore()));
+//        for (Datum sample : dataset) {
+//            if (sample.getCluster() == 0) {                     // Check the point hasn't been clustered
+//                Dataset neighbours = getNeighbors(sample, dataset);
+//                if (neighbours.size() >= minPoints) {
+//                    for (int j = 0; j < neighbours.size(); j++) {
+//                        Datum neighbor = neighbours.get(j);
+//
+//                        if (neighbor.getCluster() == 0) {       // Check the point hasn't been clustered
+//                            List<Datum> individualNeighbours = getNeighbors(neighbor, dataset);
+//                            if (individualNeighbours.size() >= minPoints) {
+//                                neighbours = mergeClusters(neighbours, individualNeighbours);
+//                            }
+//                        }
+//                    }
+//                    // Set cluster
+//                    neighbours.forEach(element -> element.setCluster(clusterIndex));
+//                    clustering.add(new Cluster(neighbours, clusterIndex++));
+//                }
+//            }
+//        }
+//        System.out.println("DBSCAN");
+//        clustering.evaluateClusters();
         return clustering;
     }
 

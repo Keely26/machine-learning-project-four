@@ -25,8 +25,6 @@ public class KMeans implements IDataClusterer {
 
     @Override
     public Clustering cluster(Dataset dataset) {
-
-
         Clustering clustering = new Clustering();
 
         //randomly select numCluster cluster centers
@@ -44,24 +42,24 @@ public class KMeans implements IDataClusterer {
         boolean swap = true;
         int epoch = 0;
 
-        //kmeans algorithm
+        // kMeans algorithm
         while (swap) {
             swap = false;
 
-            for (int i = 0; i < dataset.size(); i++) {
-                double minDist = distance(clusters[0].getClusterCenter(), dataset.get(i).features);
+            for (Datum datum : dataset) {
+                double minDist = datum.computeDistance(clusters[0].getClusterCenter());
                 int clusterId = 0;
 
                 for (int j = 1; j < numClusters; j++) {
-                    double currentDist = distance(clusters[j].getClusterCenter(), dataset.get(i).features);
+                    double currentDist = datum.computeDistance(clusters[j].getClusterCenter());
 
                     if (currentDist < minDist) {
                         minDist = currentDist;
                         clusterId = j;
                     }
                 }
-                if (!(clusterSet.get(clusterId).contains(dataset.get(i)))) {
-                    clusterSet.get(clusterId).add(dataset.get(i));
+                if (!(clusterSet.get(clusterId).contains(datum))) {
+                    clusterSet.get(clusterId).add(datum);
                     swap = true;
                 }
 
@@ -73,27 +71,12 @@ public class KMeans implements IDataClusterer {
             clustering.evaluateClusters();
             epoch++;
         }
-
         return clustering;
     }
 
-
-    //calculates the Euclidean distance
-    public double distance(double[] center, double[] features) {
-        double dist = 0.0;
-
-        for (int i = 0; i < center.length; i++) {
-            dist += Math.pow(center[i] - features[i], 2);
-
-        }
-        return Math.sqrt(dist);
-    }
-
     // averages each cluster to create the new cluster center
-    public void averageCluster() {
-
+    private void averageCluster() {
         for (int i = 0; i < numClusters; i++) {
-
             double[] newCenter = new double[clusterSet.get(i).get(0).features.length];
 
             for (int f = 0; f < clusterSet.get(i).get(0).features.length; f++) {
@@ -105,7 +88,6 @@ public class KMeans implements IDataClusterer {
 
                 newCenter[f] = sumFeature / clusterSet.get(i).size();
             }
-
             clusters[i].setClusterCenter(newCenter);
         }
     }

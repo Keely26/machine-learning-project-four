@@ -4,18 +4,22 @@ public class Datum {
 
     public final double[] features;
     private int cluster;
+    private boolean core;
 
     public Datum(double[] features) {
         this.features = features;
     }
 
-    public double computeDistance(Datum datum) {
-        assert datum.features.length == this.features.length : "Non-congruent feature lengths!";
+    /*
+     * Return the manhattan distance between this point an an arbitrary point of the same dimensionality
+     */
+    public double computeDistance(double[] featureVector) {
+        assert featureVector.length == this.features.length : "Non-congruent feature lengths!";
 
         double distance = 0.0;
 
         for (int i = 0; i < features.length; i++) {
-            distance += Math.abs(features[i] - datum.features[i]);
+            distance += Math.abs(features[i] - featureVector[i]);
         }
 
         return distance;
@@ -32,5 +36,13 @@ public class Datum {
     @Override
     public String toString() {
         return Integer.toString(cluster);
+    }
+
+    public boolean isCore() {
+        return this.core;
+    }
+
+    public void setCore(boolean core) {
+        this.core = core;
     }
 }

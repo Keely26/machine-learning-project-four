@@ -1,9 +1,6 @@
 package Clusterers;
 
-import Data.Cluster;
-import Data.Clustering;
-import Data.Dataset;
-import Data.Datum;
+import Data.*;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -23,6 +20,8 @@ public class DBSCAN implements IDataClusterer {
     @Override
     public Clustering cluster(Dataset dataset) {
         Clustering clustering = new Clustering();
+        findCorePoints(dataset);
+
         clusterIndex = 0;
 
         for (Datum sample : dataset) {
@@ -51,11 +50,25 @@ public class DBSCAN implements IDataClusterer {
     }
 
     /**
+     * Identify all core points within the provided dataset,
+     * sets Datum.corePoint as such
+     */
+    private void findCorePoints(Dataset dataset) {
+        // Point is core if there are minPoints within epsilon of it
+        dataset.forEach(point -> {
+            Dataset neighborPoints = dataset.parallelStream()
+                    .filter(neighbor -> !neighbor.equals(point) && dataset.getDistance(point, neighbor) < this.epsilon)
+                    .collect(Collectors.toCollection(Dataset::new));
+            point.setCore(neighborPoints.size() > this.minPoints);
+        });
+    }
+
+    /**
      * Collect the list of data points within epsilon of the target point
      */
     private Dataset getNeighbors(Datum sample, Dataset dataset) {
         return dataset.parallelStream()
-                .filter(datum -> sample.computeDistance(datum) < this.epsilon)
+                .filter(datum -> sample.computeDistance(datum.features) < this.epsilon)
                 .collect(Collectors.toCollection(Dataset::new));
     }
 

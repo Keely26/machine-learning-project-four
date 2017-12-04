@@ -1,31 +1,36 @@
 package Clusterers;
 
 import Data.*;
+import Utilites.Utilities;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class Particle {
 
     private List<double[]> position;
     private List<double[]> personalBest;
+    private List<double[]> velocities;
     private double personalBestQuality;
-
-    private List<double[]> velocity;
+    private double inertia;
 
     public Particle() {
     }
 
-    public Particle(List<double[]> position, List<double[]> velocity) {
+    public Particle(List<double[]> position, List<double[]> velocities, double inertia) {
         this.position = position;
         this.personalBest = position;
-        this.velocity = velocity;
+        this.velocities = velocities;
+        this.inertia = inertia;
     }
 
     public double evaluate(Dataset dataset) {
-        Clustering clustering = new Clustering();
-        this.position.forEach(center -> clustering.add(new Cluster(center)));
+        Clustering clustering = this.position.stream()
+                .map(Cluster::new)
+                .collect(Collectors.toCollection(Clustering::new));
+
         // Build clustering
-        this.assignClusters(dataset, clustering);
+        clustering = Utilities.assignClusters(dataset, clustering);
 
         double currentQuality = clustering.evaluateClusters();
         if (currentQuality > this.personalBestQuality) {
@@ -36,68 +41,42 @@ public class Particle {
         return currentQuality;
     }
 
-    public List<double[]> getPosition() {
-        return position;
+    public void updatePosition() {
+        for (int i = 0, clusterIndex = this.position.size(); i < clusterIndex; i++) {
+            double[] clusterCenter = this.position.get(i);
+            double[] centerVelocity = this.velocities.get(i);
+            double[] updatedCenterPosition = new double[clusterCenter.length];
+
+            for (int j = 0, length = clusterCenter.length; j < length; j++) {
+                updatedCenterPosition[j] = clusterCenter[j] + centerVelocity[j];
+            }
+
+            this.position.set(i, updatedCenterPosition);
+        }
     }
 
-    public void setPosition(List<double[]> position) {
-        this.position = position;
-    }
 
-    public List<double[]> getVelocity() {
-        return velocity;
-    }
-
-    public void setVelocity(List<double[]> velocity) {
-        this.velocity = velocity;
-    }
-
-    public List<double[]> getPersonalBest() {
-        return personalBest;
-    }
-
-    public void setPersonalBest(List<double[]> bestPosition) {
-        this.personalBest = bestPosition;
+    public void updateVelocity(List<double[]> globalBest) {
+        for (int i = 0; i < this.velocities.size(); i++) {
+            for (int j = 0, length = this.velocities.get(0).length; j < length; j++) {
+                this.velocities.get(i)[j] = (this.inertia * this.velocities.get(i)[j])
+                        + (Utilities.randomDouble(1) * (this.personalBest.get(i)[j] - this.velocities.get(i)[j]))
+                        + (Utilities.randomDouble(1) * (globalBest.get(i)[j] - this.velocities.get(i)[j]));
+            }
+        }
     }
 
     public Clustering getPersonalBest(Dataset dataset) {
         Clustering clustering = new Clustering();
         this.personalBest.forEach(center -> clustering.add(new Cluster(center)));
-        return this.assignClusters(dataset, clustering);
+        return Utilities.assignClusters(dataset, clustering);
     }
 
-    // Todo: Fix cluster assignment
-    private Clustering assignClusters(Dataset dataset, Clustering clustering) {
-        // For each element in the dataset, add it to the nearest cluster
-        for (Datum datum : dataset) {
-            Cluster nearestCluster = clustering.get(0);
-            double clusterDistance = Double.MAX_VALUE;
-            for (Cluster cluster : clustering) {
-                double distance = datum.computeDistance(cluster.getClusterCenter());
-                if (distance < clusterDistance) {
-                    nearestCluster = cluster;
-                    clusterDistance = distance;
-                }
-            }
-            // Assign dataset.get(i) to nearestCluster
-            nearestCluster.add(datum);
-        }
-        return clustering;
-//        for (int i = 0; i < dataset.size(); i++) {
-//            Datum datum = dataset.get(i);
-//            Cluster nearestCluster = clustering.get(0);
-//            double clusterDistance = Double.MAX_VALUE;
-//            for (Cluster cluster : clustering) {
-//                double distance = datum.computeDistance(cluster.getClusterCenter());
-//                if (distance < clusterDistance) {
-//                    nearestCluster = cluster;
-//                    clusterDistance = distance;
-//                }
-//            }
-//            nearestCluster.add(datum);
-//            if (!assignedClustering.contains(nearestCluster)) {
-//
-//            }
-//        }
+    public List<double[]> getPosition() {
+        return position;
+    }
+
+    public List<double[]> getVelocities() {
+        return velocities;
     }
 }

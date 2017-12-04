@@ -5,6 +5,7 @@ import Utilites.Utilities;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class PSOClusterer implements IDataClusterer {
 
@@ -28,52 +29,24 @@ public class PSOClusterer implements IDataClusterer {
 
         int iteration = 0;
         do {
+            System.out.print("Iteration: " + iteration);
             // For each particle, update position, evaluate, update velocity, set personal and global bests
             particleSwarm.forEach((Particle particle) -> {
                 // Update particle position
-                List<double[]> currentPosition = particle.getPosition();
-                List<double[]> currentVelocity = particle.getVelocity();
-                List<double[]> updatedPosition = new ArrayList<>();
-
-                for (int i = 0; i < currentPosition.size(); i++) {
-                    double[] clusterCenter = currentPosition.get(i);
-                    double[] centerVelocity = currentVelocity.get(i);
-                    double[] updatedCenterPosition = new double[clusterCenter.length];
-
-                    assert clusterCenter.length == centerVelocity.length : "Non-congruent position/velocity vectors!";
-
-                    for (int j = 0, length = clusterCenter.length; j < length; j++) {
-                        updatedCenterPosition[j] = clusterCenter[j] + centerVelocity[j];
-                    }
-
-                    updatedPosition.add(updatedCenterPosition);
-                }
-
                 // Update particle velocity
-                List<double[]> updatedVelocity = new ArrayList<>();
-                List<double[]> personalBest = particle.getPersonalBest();
-                List<double[]> globalBest = particleSwarm.getGlobalBest().getPersonalBest();
-
-                for (int i = 0; i < updatedVelocity.size(); i++) {
-                    double[] centerVelocity = new double[dataset.getFeatureSize()];
-                    for (int j = 0; j < centerVelocity.length; j++) {
-                        centerVelocity[j] = (inertia * currentVelocity.get(i)[j])
-                                + (Utilities.randomDouble(1) * personalBest.get(i)[j])
-                                + (Utilities.randomDouble(1) * globalBest.get(i)[j]);
-                    }
-                }
-
-                particle.setPosition(updatedPosition);
-                particle.setVelocity(updatedVelocity);
+                particle.updatePosition();
+                particle.updateVelocity(particleSwarm.getGlobalBest());
             });
 
             // Evaluate swarm
-            this.particleSwarm.evaluateSwarm(dataset);
+            double quality = this.particleSwarm.evaluateSwarm(dataset);
+            System.out.println(", " + quality);
 
             iteration++;
         } while (iteration < maxIterations && notConverged());
 
-        return particleSwarm.getGlobalBest().getPersonalBest(dataset);
+        Clustering clustering = this.particleSwarm.getGlobalBest().stream().map(Cluster::new).collect(Collectors.toCollection(Clustering::new));
+        return Utilities.assignClusters(dataset, clustering);
     }
 
     private boolean notConverged() {
@@ -114,7 +87,7 @@ public class PSOClusterer implements IDataClusterer {
                 initialCenterVelocities.add(startingVelocity);
             }
 
-            this.particleSwarm.add(new Particle(initialClusterCenters, initialCenterVelocities));
+            this.particleSwarm.add(new Particle(initialClusterCenters, initialCenterVelocities, this.inertia));
         }
         this.particleSwarm.evaluateSwarm(dataset);
     }

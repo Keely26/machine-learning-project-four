@@ -1,11 +1,30 @@
 package Utilites;
 
+import Data.*;
+
 import java.io.*;
 import java.util.Random;
 
 public class Utilities {
 
     public static final Random random = new Random(System.nanoTime());
+
+    public static Clustering assignClusters(Dataset dataset, Clustering clustering) {
+        // For each element in the dataset, add it to the nearest cluster
+        for (Datum datum : dataset) {
+            Cluster nearestCluster = clustering.get(0);
+            double clusterDistance = Double.MAX_VALUE;
+            for (Cluster cluster : clustering) {
+                double distance = datum.computeDistance(cluster.getClusterCenter());
+                if (distance < clusterDistance) {
+                    nearestCluster = cluster;
+                    clusterDistance = distance;
+                }
+            }
+            nearestCluster.add(datum);
+        }
+        return clustering;
+    }
 
     public static Integer randomInteger(int bound) {
         return random.nextInt(bound);

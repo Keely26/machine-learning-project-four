@@ -14,8 +14,8 @@ public class ClustererFactory {
 
 
     /* PSO Parameters */
-    private static final int numParticles = 100;
-    private static final int maxIterations = 10000;
+    private static final int numParticles = 20;
+    private static final int maxIterations = 100;
     private static final double inertia = 1.0;
 
     /* Competitive Network Parameters */

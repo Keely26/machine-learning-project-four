@@ -3,27 +3,29 @@ package Clusterers;
 import Data.Dataset;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class Swarm extends ArrayList<Particle> {
 
-    private Particle globalBest;
+    private List<double[]> globalBest;
     private double globalBestQuality;
 
     public Swarm(int size) {
         super(size);
     }
 
-    public Particle getGlobalBest() {
+    public List<double[]> getGlobalBest() {
         return this.globalBest;
     }
 
-    public void evaluateSwarm(Dataset dataset) {
+    public double evaluateSwarm(Dataset dataset) {
         this.forEach(particle -> {
             double quality = particle.evaluate(dataset);
             if (quality > this.globalBestQuality) {
-                this.globalBest = particle;
+                this.globalBest = particle.getPosition();
                 this.globalBestQuality = quality;
             }
         });
+        return this.globalBestQuality;
     }
 }

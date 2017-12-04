@@ -3,7 +3,7 @@ import Clusterers.*;
 public class ClustererFactory {
 
     /* Universal Parameters */
-    private static final int numClusters = 10;
+    private static final int numClusters = 6;
 
     /* ACO Parameters */
     private static final int numAnts = 50;
@@ -12,11 +12,10 @@ public class ClustererFactory {
     private static final double radius = 10.0;
     private static final double gamma = 2.0;
 
-
     /* PSO Parameters */
-    private static final int numParticles = 20;
-    private static final int maxIterations = 100;
-    private static final double inertia = 1.0;
+    private static final int numParticles = 10;
+    private static final int maxIterations = 20;
+    private static final double inertia = 0.0;
 
     /* Competitive Network Parameters */
     private static final int numInputNeurons = 10;

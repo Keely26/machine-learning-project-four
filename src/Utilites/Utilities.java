@@ -30,6 +30,10 @@ public class Utilities {
         return random.nextInt(bound);
     }
 
+    public static double randomDouble(double lowerBound, double upperBound) {
+        return randomDouble((int) (lowerBound + 1), (int) (upperBound + 1)) % upperBound;
+    }
+
     public static double randomDouble(int lowerBound, int upperBound) {
         return randomDouble(upperBound + lowerBound) - lowerBound;
     }

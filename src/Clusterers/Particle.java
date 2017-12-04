@@ -25,9 +25,10 @@ public class Particle {
     }
 
     public double evaluate(Dataset dataset) {
-        Clustering clustering = this.position.stream()
-                .map(Cluster::new)
-                .collect(Collectors.toCollection(Clustering::new));
+        Clustering clustering = new Clustering();
+        for (double[] centerVector : this.position) {
+            clustering.add(new Cluster(centerVector));
+        }
 
         // Build clustering
         clustering = Utilities.assignClusters(dataset, clustering);

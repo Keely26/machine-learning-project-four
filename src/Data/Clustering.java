@@ -6,6 +6,7 @@ import java.util.List;
 public class Clustering extends ArrayList<Cluster> {
 
     private double clusterQuality = Double.MAX_VALUE;
+    private double emptyClusterPenalty = 1000000000;
 
     public Clustering(List<Cluster> clusters) {
         super(clusters);
@@ -19,18 +20,23 @@ public class Clustering extends ArrayList<Cluster> {
         if (this.size() == 0) {
             return Double.NEGATIVE_INFINITY;
         }
+
         // Calculate average intra-cluster distance (lower is better)
-        double intraSum = this.stream().mapToDouble(this::getAvgIntraClusterDistance).sum() / this.size();
+        double intraSum = this.stream()
+                .mapToDouble(this::getAvgIntraClusterDistance)
+                .sum() / this.size();
 
         // Calculate average inter-cluster distance (higher is better)
         Dataset clusterCenters = new Dataset();
-        this.forEach(cluster -> clusterCenters.add(getClusterCenter(cluster)));
+        this.forEach(cluster -> {
+            clusterCenters.add(getClusterCenter(cluster));
+        });
         clusterCenters.computeDistances();
 
         double interSum = 0.0;
         for (int i = 0; i < clusterCenters.size(); i++) {
             for (int j = 0; j < clusterCenters.size(); j++) {
-                interSum += clusterCenters.getDistance(clusterCenters.get(i), clusterCenters.get(j));
+                interSum += this.get(i).size() * clusterCenters.getDistance(clusterCenters.get(i), clusterCenters.get(j));
             }
         }
 
@@ -46,7 +52,7 @@ public class Clustering extends ArrayList<Cluster> {
 
     private double getAvgIntraClusterDistance(Cluster cluster) {
         if (cluster.size() == 0) {
-            return 0.0;
+            return emptyClusterPenalty;
         }
         double avgDistance = 0.0;
         for (int i = 0; i < cluster.size(); i++) {

@@ -3,8 +3,7 @@ package Clusterers;
 import Data.*;
 import Utilites.Utilities;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class PSOClusterer implements IDataClusterer {
@@ -29,11 +28,14 @@ public class PSOClusterer implements IDataClusterer {
 
         int iteration = 0;
         do {
-            System.out.print("Iteration: " + iteration);
+            System.out.println("Iteration: " + iteration);
+            Particle best = new Particle(particleSwarm.getGlobalBest(), null, 0);
+            Clustering c = Utilities.assignClusters(dataset, particleSwarm.getGlobalBest());
+            c.forEach(cluster -> {
+                System.out.println("Cluster: " + cluster.getClusterId() + ", Count: " + cluster.size());
+            });
             // For each particle, update position, evaluate, update velocity, set personal and global bests
             particleSwarm.forEach((Particle particle) -> {
-                // Update particle position
-                // Update particle velocity
                 particle.updatePosition();
                 particle.updateVelocity(particleSwarm.getGlobalBest());
             });
@@ -45,7 +47,11 @@ public class PSOClusterer implements IDataClusterer {
             iteration++;
         } while (iteration < maxIterations && notConverged());
 
-        Clustering clustering = this.particleSwarm.getGlobalBest().stream().map(Cluster::new).collect(Collectors.toCollection(Clustering::new));
+        // Retrieve best clustering
+        Clustering clustering = this.particleSwarm.getGlobalBest()
+                .stream()
+                .map(Cluster::new)
+                .collect(Collectors.toCollection(Clustering::new));
         return Utilities.assignClusters(dataset, clustering);
     }
 
@@ -56,20 +62,8 @@ public class PSOClusterer implements IDataClusterer {
     private void initializeParticles(Dataset dataset) {
         this.particleSwarm = new Swarm(this.numParticles);
 
-        double minValue = Double.MAX_VALUE;
-        double maxValue = Double.MIN_VALUE;
-
-        for (Datum point : dataset) {
-            for (int j = 0, cutoff = dataset.getFeatureSize(); j < cutoff; j++) {
-                double value = point.features[j];
-                if (value > maxValue) {
-                    maxValue = value;
-                }
-                if (value < minValue) {
-                    minValue = value;
-                }
-            }
-        }
+        double[] maxValues = getMaxFeatureVector(dataset);
+        double[] minValues = getMinFeatureVector(dataset);
 
         for (int i = 0; i < this.numParticles; i++) {
             List<double[]> initialClusterCenters = new ArrayList<>();
@@ -80,8 +74,8 @@ public class PSOClusterer implements IDataClusterer {
                 double[] startingVelocity = new double[dataset.getFeatureSize()];
 
                 for (int k = 0; k < startingPosition.length; k++) {
-                    startingPosition[k] = Utilities.randomDouble((int) minValue, (int) maxValue);
-                    startingVelocity[k] = Utilities.randomDouble((int) Math.sqrt(maxValue));
+                    startingPosition[k] = Utilities.randomDouble(minValues[k], maxValues[k]);
+                    startingVelocity[k] = Utilities.randomDouble(0, Math.sqrt(maxValues[k]));
                 }
                 initialClusterCenters.add(startingPosition);
                 initialCenterVelocities.add(startingVelocity);
@@ -89,6 +83,47 @@ public class PSOClusterer implements IDataClusterer {
 
             this.particleSwarm.add(new Particle(initialClusterCenters, initialCenterVelocities, this.inertia));
         }
+
         this.particleSwarm.evaluateSwarm(dataset);
+    }
+
+    private static double[] getMinFeatureVector(Dataset dataset) {
+        double[] minValues = new double[dataset.getFeatureSize()];
+
+        // Initialize each element to max value
+        for (int i = 0; i < dataset.getFeatureSize(); i++) {
+            minValues[i] = Double.MAX_VALUE;
+        }
+
+        // Find min value for each feature
+        dataset.forEach(datum -> {
+            for (int i = 0; i < dataset.getFeatureSize(); i++) {
+                if (datum.features[i] < minValues[i]) {
+                    minValues[i] = datum.features[i];
+                }
+            }
+        });
+
+        return minValues;
+    }
+
+    private static double[] getMaxFeatureVector(Dataset dataset) {
+        double[] maxValues = new double[dataset.getFeatureSize()];
+
+        // Initialize each element to min value
+        for (int i = 0; i < dataset.getFeatureSize(); i++) {
+            maxValues[i] = Double.MIN_VALUE;
+        }
+
+        // Find max value for each feature
+        dataset.forEach(datum -> {
+            for (int i = 0; i < dataset.getFeatureSize(); i++) {
+                if (datum.features[i] > maxValues[i]) {
+                    maxValues[i] = datum.features[i];
+                }
+            }
+        });
+
+        return maxValues;
     }
 }

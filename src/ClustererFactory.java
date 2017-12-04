@@ -21,7 +21,7 @@ public class ClustererFactory {
 
     /* DBSCAN Parameters */
     private static final int minPoints = 8;
-    private static final double epsilon = 10.0;
+    private static final double epsilon = 8;
 
 
     public static IDataClusterer buildClusterer(ClustererType type) {

@@ -11,6 +11,9 @@ public class Clustering extends ArrayList<Cluster> {
     }
 
     public double evaluateClusters() {
+        if (this.size() == 0) {
+            return Double.POSITIVE_INFINITY;
+        }
         // Calculate average intra-cluster distance (lower is better)
         double intraSum = this.stream().mapToDouble(this::getAvgIntraClusterDistance).sum() / this.size();
 
@@ -28,8 +31,6 @@ public class Clustering extends ArrayList<Cluster> {
         interSum /= (Math.pow(clusterCenters.size(), 2));
 
         this.clusterQuality = intraSum / interSum;
-        System.out.println("Cluster quality: " + this.clusterQuality);
-
         return this.clusterQuality;
     }
 
@@ -45,8 +46,9 @@ public class Clustering extends ArrayList<Cluster> {
                     avgDistance += cluster.getDistance(cluster.get(i), cluster.get(j));
                 }
             }
+            avgDistance /= cluster.size();
         }
-        return avgDistance / Math.pow(cluster.size(), 2);
+        return avgDistance / cluster.size();
     }
 
     private Datum getClusterCenter(Cluster cluster) {

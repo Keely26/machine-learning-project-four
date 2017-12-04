@@ -10,6 +10,10 @@ public class Cluster extends Dataset {
         this.clusterId = clusterId;
     }
 
+    public Cluster(int clusterId) {
+        this.clusterId = clusterId;
+    }
+
     public int getClusterId() {
         return clusterId;
     }

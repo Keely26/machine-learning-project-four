@@ -2,7 +2,6 @@ package Clusterers;
 
 import Data.*;
 
-import java.util.List;
 import java.util.stream.Collectors;
 
 public class DBSCAN implements IDataClusterer {
@@ -26,43 +25,52 @@ public class DBSCAN implements IDataClusterer {
         // Mark all core points
         findCorePoints(dataset);
 
-        dataset.forEach(datum -> System.out.println(datum.isCore()));
-//        for (Datum sample : dataset) {
-//            if (sample.getCluster() == 0) {                     // Check the point hasn't been clustered
-//                Dataset neighbours = getNeighbors(sample, dataset);
-//                if (neighbours.size() >= minPoints) {
-//                    for (int j = 0; j < neighbours.size(); j++) {
-//                        Datum neighbor = neighbours.get(j);
-//
-//                        if (neighbor.getCluster() == 0) {       // Check the point hasn't been clustered
-//                            List<Datum> individualNeighbours = getNeighbors(neighbor, dataset);
-//                            if (individualNeighbours.size() >= minPoints) {
-//                                neighbours = mergeClusters(neighbours, individualNeighbours);
-//                            }
-//                        }
-//                    }
-//                    // Set cluster
-//                    neighbours.forEach(element -> element.setCluster(clusterIndex));
-//                    clustering.add(new Cluster(neighbours, clusterIndex++));
-//                }
-//            }
-//        }
-//        System.out.println("DBSCAN");
-//        clustering.evaluateClusters();
+        dataset.forEach(dataPoint -> {
+            // If the data point is non-core or has already been clustered, continue
+            if (!dataPoint.isCore() || dataPoint.getCluster() != 0) {
+                return;
+            }
+            this.clusterIndex++;
+            dataPoint.setCluster(clusterIndex);
+
+            expandCluster(dataPoint, dataset);
+        });
+
+        dataset.sortByCluster();
+        Cluster cluster = new Cluster(dataset.get(0).getCluster());
+        for (Datum next : dataset) {
+            if (cluster.getClusterId() == next.getCluster()) {
+                cluster.add(next);
+            } else {
+                clustering.add(cluster);
+                cluster = new Cluster(next.getCluster());
+                cluster.add(next);
+            }
+        }
+
         return clustering;
     }
 
     /**
      * Identify all core points within the provided dataset,
-     * sets Datum.corePoint as such
+     * sets Datum.corePoint as such.
+     * A point point is defined to be a CorePoint if there are at least minPts other points within an epsilon radius
      */
     private void findCorePoints(Dataset dataset) {
-        // Point is core if there are minPoints within epsilon of it
-        dataset.forEach(point -> {
-            Dataset neighborPoints = dataset.parallelStream()
-                    .filter(neighbor -> !neighbor.equals(point) && dataset.getDistance(point, neighbor) < this.epsilon)
-                    .collect(Collectors.toCollection(Dataset::new));
-            point.setCore(neighborPoints.size() > this.minPoints);
+        dataset.forEach(point -> point.setCore(getNeighbors(point, dataset).size() > this.minPoints));
+    }
+
+    private void expandCluster(Datum seedPoint, Dataset dataset) {
+        int clusterId = seedPoint.getCluster();
+        Dataset neighbors = getNeighbors(seedPoint, dataset);
+        neighbors.forEach(neighbor -> {
+            if (neighbor.getCluster() != 0) {
+                return;
+            }
+            neighbor.setCluster(clusterId);
+            if (neighbor.isCore()) {
+                expandCluster(neighbor, dataset);
+            }
         });
     }
 
@@ -71,17 +79,7 @@ public class DBSCAN implements IDataClusterer {
      */
     private Dataset getNeighbors(Datum sample, Dataset dataset) {
         return dataset.parallelStream()
-                .filter(datum -> sample.computeDistance(datum.features) < this.epsilon)
+                .filter(neighbor -> !neighbor.equals(sample) && dataset.getDistance(sample, neighbor) < this.epsilon)
                 .collect(Collectors.toCollection(Dataset::new));
-    }
-
-    private Dataset mergeClusters(List<Datum> listOne, List<Datum> listTwo) {
-        Dataset distinct = new Dataset(listOne);
-
-        listTwo.parallelStream()
-                .filter(element -> !distinct.contains(element))
-                .forEach(distinct::add);
-
-        return distinct;
     }
 }

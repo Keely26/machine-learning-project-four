@@ -13,11 +13,11 @@ public class Neuron {
         return numConnections;
     }
 
-    public double[] getFeatureOrCenter(){
+    public double[] getFeatureOrCenter() {
         return featureOrCenter;
     }
 
-    public void setFeatureOrCenter(double[] newFeatureOrCenter){
+    public void setFeatureOrCenter(double[] newFeatureOrCenter) {
         featureOrCenter = newFeatureOrCenter;
     }
 }

@@ -1,43 +1,84 @@
 package Clusterers;
 
-import Data.Clustering;
+import Data.*;
+
+import java.util.List;
 
 public class Particle {
 
-    private Clustering personalBest;
-    private Clustering position;
-    private double[] velocity;
+    private List<double[]> position;
+    private List<double[]> personalBest;
+    private double personalBestQuality;
+
+    private List<double[]> velocity;
 
     public Particle() {
     }
 
-    public Particle(Clustering position, double[] velocity) {
+    public Particle(List<double[]> position, List<double[]> velocity) {
         this.position = position;
         this.personalBest = position;
         this.velocity = velocity;
     }
 
-    public Clustering getPosition() {
+    public double evaluate(Dataset dataset) {
+        Clustering clustering = new Clustering();
+        this.position.forEach(center -> clustering.add(new Cluster(center)));
+        // Build clustering
+        this.assignClusters(dataset, clustering);
+
+        double currentQuality = clustering.evaluateClusters();
+        if (currentQuality > this.personalBestQuality) {
+            this.personalBest = this.position;
+            this.personalBestQuality = currentQuality;
+        }
+
+        return currentQuality;
+    }
+
+    public List<double[]> getPosition() {
         return position;
     }
 
-    public void setPosition(Clustering position) {
+    public void setPosition(List<double[]> position) {
         this.position = position;
     }
 
-    public double[] getVelocity() {
+    public List<double[]> getVelocity() {
         return velocity;
     }
 
-    public void setVelocity(double[] velocity) {
+    public void setVelocity(List<double[]> velocity) {
         this.velocity = velocity;
     }
 
-    public Clustering getPersonalBest() {
+    public List<double[]> getPersonalBest() {
         return personalBest;
     }
 
-    public void setPersonalBest(Clustering bestPosition) {
+    public void setPersonalBest(List<double[]> bestPosition) {
         this.personalBest = bestPosition;
+    }
+
+    public Clustering getPersonalBest(Dataset dataset) {
+        Clustering clustering = new Clustering();
+        this.personalBest.forEach(center -> clustering.add(new Cluster(center)));
+        this.assignClusters(dataset, clustering);
+        return clustering;
+    }
+
+    private void assignClusters(Dataset dataset, Clustering clustering) {
+        dataset.forEach(datum -> {
+            Cluster nearestCluster = clustering.get(0);
+            double clusterDistance = Double.MAX_VALUE;
+            for (Cluster cluster : clustering) {
+                double distance = datum.computeDistance(cluster.getClusterCenter());
+                if (distance < clusterDistance) {
+                    nearestCluster = cluster;
+                    clusterDistance = distance;
+                }
+            }
+            nearestCluster.add(datum);
+        });
     }
 }

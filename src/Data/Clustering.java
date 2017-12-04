@@ -1,10 +1,15 @@
 package Data;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class Clustering extends ArrayList<Cluster> {
 
     private double clusterQuality = Double.MAX_VALUE;
+
+    public Clustering(List<Cluster> clusters) {
+        super(clusters);
+    }
 
     public Clustering() {
 
@@ -12,7 +17,7 @@ public class Clustering extends ArrayList<Cluster> {
 
     public double evaluateClusters() {
         if (this.size() == 0) {
-            return Double.POSITIVE_INFINITY;
+            return Double.NEGATIVE_INFINITY;
         }
         // Calculate average intra-cluster distance (lower is better)
         double intraSum = this.stream().mapToDouble(this::getAvgIntraClusterDistance).sum() / this.size();
@@ -25,12 +30,13 @@ public class Clustering extends ArrayList<Cluster> {
         double interSum = 0.0;
         for (int i = 0; i < clusterCenters.size(); i++) {
             for (int j = 0; j < clusterCenters.size(); j++) {
-                interSum = clusterCenters.getDistance(clusterCenters.get(i), clusterCenters.get(j));
+                interSum += clusterCenters.getDistance(clusterCenters.get(i), clusterCenters.get(j));
             }
         }
+
         interSum /= (Math.pow(clusterCenters.size(), 2));
 
-        this.clusterQuality = intraSum / interSum;
+        this.clusterQuality = interSum / intraSum;
         return this.clusterQuality;
     }
 

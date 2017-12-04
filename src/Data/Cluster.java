@@ -14,6 +14,10 @@ public class Cluster extends Dataset {
         this.clusterId = clusterId;
     }
 
+    public Cluster(double[] clusterCenter) {
+        this.clusterCenter = clusterCenter;
+    }
+
     public int getClusterId() {
         return clusterId;
     }

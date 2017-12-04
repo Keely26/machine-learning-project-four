@@ -1,8 +1,5 @@
 import Clusterers.*;
-import Data.Cluster;
-import Data.Clustering;
-import Data.Dataset;
-import Data.DatasetType;
+import Data.*;
 
 public class Tester {
 
@@ -23,7 +20,7 @@ public class Tester {
 //        Clustering glassClustering = dbScan.cluster(glassDataset);
 //        printClusterStats(glassClustering, ClustererType.DBSCAN);
 
-      //  Clustering banknoteClustering = dbScan.cluster(banknoteDataset);
+        //  Clustering banknoteClustering = dbScan.cluster(banknoteDataset);
         //  Clustering irisClustering = dbScan.cluster(irisDataset);
         // Clustering parkinsonsClustering = dbScan.cluster(parkinsonsDataset);
         // Clustering retinopathyClustering = dbScan.cluster(retinopathyDataset);
@@ -34,7 +31,7 @@ public class Tester {
             System.out.println("No clusters!");
             return;
         }
-        Double quality = clusters.evaluateClusters();
+        double quality = clusters.evaluateClusters();
         System.out.println(type.toString());
         System.out.println("Quality: " + quality);
         for (Cluster cluster : clusters) {
@@ -48,14 +45,24 @@ public class Tester {
     }
 
     private static void findGoodParams(Dataset dataset) {
-        for (int i = 0; i < 20; i++) {
-            for (int j = 0; j < 20; j++) {
+        int minPoints = 0;
+        int epsilon = 0;
+        double bestQuality = 0.0;
+        for (int i = 5; i <= 20; i++) {
+            for (int j = 0; j <= 20; j++) {
                 System.out.println("MinPts: " + i + ", Epsilon: " + j);
                 IDataClusterer DBSCAN = new DBSCAN(i, j);
-                DBSCAN.cluster(dataset);
-                printClusterStats(DBSCAN.cluster(dataset), ClustererType.DBSCAN);
+                Clustering clustering = DBSCAN.cluster(dataset);
+                printClusterStats(clustering, ClustererType.DBSCAN);
+                if (clustering.getClusterQuality() > bestQuality) {
+                    bestQuality = clustering.getClusterQuality();
+                    minPoints = i;
+                    epsilon = j;
+                }
                 resetDataset(dataset);
             }
         }
+        System.out.println("MinPts: " + minPoints);
+        System.out.println("Epsilon: " + epsilon);
     }
 }

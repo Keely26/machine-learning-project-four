@@ -10,6 +10,8 @@ public class ClustererFactory {
     private static final double k1 = 2;
     private static final double k2 = 2;
     private static final double radius = 10.0;
+    private static final double gamma = 2.0;
+
 
     /* PSO Parameters */
     private static final int numParticles = 100;
@@ -28,7 +30,7 @@ public class ClustererFactory {
     public static IDataClusterer buildClusterer(ClustererType type) {
         switch (type) {
             case ACOClusterer:
-                return new ACOClusterer(numAnts, k1, k2, radius);
+                return new ACOClusterer(numAnts, k1, k2, radius, gamma);
             case PSOClusterer:
                 return new PSOClusterer(numClusters, numParticles, maxIterations, inertia);
             case CompetitiveNetwork:

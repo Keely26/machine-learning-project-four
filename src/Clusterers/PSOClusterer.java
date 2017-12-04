@@ -101,13 +101,14 @@ public class PSOClusterer implements IDataClusterer {
         for (int i = 0; i < this.numParticles; i++) {
             List<double[]> initialClusterCenters = new ArrayList<>();
             List<double[]> initialCenterVelocities = new ArrayList<>();
+
             for (int j = 0; j < this.numClusters; j++) {
                 double[] startingPosition = new double[dataset.getFeatureSize()];
                 double[] startingVelocity = new double[dataset.getFeatureSize()];
 
                 for (int k = 0; k < startingPosition.length; k++) {
-                    startingPosition[i] = Utilities.randomDouble((int) minValue, (int) maxValue);
-                    startingVelocity[i] = Utilities.randomDouble((int) Math.sqrt(maxValue));
+                    startingPosition[k] = Utilities.randomDouble((int) minValue, (int) maxValue);
+                    startingVelocity[k] = Utilities.randomDouble((int) Math.sqrt(maxValue));
                 }
                 initialClusterCenters.add(startingPosition);
                 initialCenterVelocities.add(startingVelocity);

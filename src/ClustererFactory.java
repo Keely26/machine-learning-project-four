@@ -3,7 +3,7 @@ import Clusterers.*;
 public class ClustererFactory {
 
     /* Universal Parameters */
-    private static final int numClusters = 4;
+    private static final int numClusters = 10;
 
     /* ACO Parameters */
     private static final int numAnts = 50;

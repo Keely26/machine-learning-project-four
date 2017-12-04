@@ -45,6 +45,9 @@ public class Clustering extends ArrayList<Cluster> {
     }
 
     private double getAvgIntraClusterDistance(Cluster cluster) {
+        if (cluster.size() == 0) {
+            return 0.0;
+        }
         double avgDistance = 0.0;
         for (int i = 0; i < cluster.size(); i++) {
             for (int j = 0; j < cluster.size(); j++) {
@@ -58,6 +61,9 @@ public class Clustering extends ArrayList<Cluster> {
     }
 
     private Datum getClusterCenter(Cluster cluster) {
+        if (cluster.getClusterCenter() != null) {
+            return new Datum(cluster.getClusterCenter());
+        }
         double[] avgVector = new double[cluster.get(0).features.length];
 
         // Sum feature values for all elements in the cluster

@@ -1,15 +1,8 @@
 package Clusterers;
 
-import Data.Clustering;
-import Data.Dataset;
-import Data.Datum;
-import sun.jvm.hotspot.utilities.Hashtable;
+import Data.*;
 
-import java.lang.reflect.Array;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 public class ACOClusterer implements IDataClusterer {
 
@@ -100,8 +93,8 @@ public class ACOClusterer implements IDataClusterer {
     private double computeDistance(double radius, Dataset dataset, double[] curLocation) {
         double avgDistance = 0.0;
         //look to see what points are in radius
-        for (Datum point: dataset) {
-            if(point.computeDistance(curLocation) <= radius) {
+        for (Datum point : dataset) {
+            if (point.computeDistance(curLocation) <= radius) {
                 //compute distance of all points in radius
                 //take average of that
                 avgDistance += point.computeDistance(curLocation);
@@ -113,7 +106,7 @@ public class ACOClusterer implements IDataClusterer {
     private double computeDensity(Dataset dataset, double radius, double gamma) {
         //(1/radius)sum(1 - d(datapoint on location and datapoint in radius)/constant (defines scale of dissimilarity))
         double density = 0;
-        density = ((1/radius)*(1 - (computeDistance(radius, dataset, getAntPosition(dataset.size()))/gamma)));
+        density = ((1 / radius) * (1 - (computeDistance(radius, dataset, getAntPosition(dataset.size())) / gamma)));
         return density;
     }
 
@@ -129,17 +122,17 @@ public class ACOClusterer implements IDataClusterer {
 
     private void pickUp() {
         //if ant not carrying
-            //observes 1 corpse in one of its neighboring sites
-                //picked up with prob = 1
-            //observes many corpses
-                //one is randomly selected
+        //observes 1 corpse in one of its neighboring sites
+        //picked up with prob = 1
+        //observes many corpses
+        //one is randomly selected
     }
 
     private void drop() {
         //after ant picks up corpse
-            //after moving at least on set away
-                //if ant surrounded by at least one other corpse
-                    //corpse is dropped in randomly selected vacant spot
+        //after moving at least on set away
+        //if ant surrounded by at least one other corpse
+        //corpse is dropped in randomly selected vacant spot
 
     }
 

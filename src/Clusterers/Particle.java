@@ -63,12 +63,13 @@ public class Particle {
     public Clustering getPersonalBest(Dataset dataset) {
         Clustering clustering = new Clustering();
         this.personalBest.forEach(center -> clustering.add(new Cluster(center)));
-        this.assignClusters(dataset, clustering);
-        return clustering;
+        return this.assignClusters(dataset, clustering);
     }
 
-    private void assignClusters(Dataset dataset, Clustering clustering) {
-        dataset.forEach(datum -> {
+    // Todo: Fix cluster assignment
+    private Clustering assignClusters(Dataset dataset, Clustering clustering) {
+        // For each element in the dataset, add it to the nearest cluster
+        for (Datum datum : dataset) {
             Cluster nearestCluster = clustering.get(0);
             double clusterDistance = Double.MAX_VALUE;
             for (Cluster cluster : clustering) {
@@ -78,7 +79,25 @@ public class Particle {
                     clusterDistance = distance;
                 }
             }
+            // Assign dataset.get(i) to nearestCluster
             nearestCluster.add(datum);
-        });
+        }
+        return clustering;
+//        for (int i = 0; i < dataset.size(); i++) {
+//            Datum datum = dataset.get(i);
+//            Cluster nearestCluster = clustering.get(0);
+//            double clusterDistance = Double.MAX_VALUE;
+//            for (Cluster cluster : clustering) {
+//                double distance = datum.computeDistance(cluster.getClusterCenter());
+//                if (distance < clusterDistance) {
+//                    nearestCluster = cluster;
+//                    clusterDistance = distance;
+//                }
+//            }
+//            nearestCluster.add(datum);
+//            if (!assignedClustering.contains(nearestCluster)) {
+//
+//            }
+//        }
     }
 }

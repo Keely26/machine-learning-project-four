@@ -6,7 +6,12 @@ public class Tester {
     private static final DatasetType dataFile = DatasetType.Glass;
 
     public static void main(String[] args) {
-        findGoodParams(DatasetBuilder.buildDataSet(DatasetType.Glass));
+
+        Dataset dataset = DatasetBuilder.buildDataSet(DatasetType.Glass);
+        IDataClusterer psoClusterer = ClustererFactory.buildClusterer(ClustererType.PSOClusterer);
+        Clustering clustering = psoClusterer.cluster(dataset);
+        printClusterStats(clustering, ClustererType.PSOClusterer);
+        //  findGoodParams(DatasetBuilder.buildDataSet(DatasetType.Glass));
 
         /* Build datasets */
 //        Dataset glassDataset = DatasetBuilder.buildDataSet(DatasetType.Glass);

@@ -38,6 +38,7 @@ public class DBSCAN implements IDataClusterer {
 
         dataset.sortByCluster();
         Cluster cluster = new Cluster(dataset.get(0).getCluster());
+        clustering.add(cluster);
         for (Datum next : dataset) {
             if (cluster.getClusterId() == next.getCluster()) {
                 cluster.add(next);
@@ -47,7 +48,6 @@ public class DBSCAN implements IDataClusterer {
                 cluster.add(next);
             }
         }
-
         return clustering;
     }
 

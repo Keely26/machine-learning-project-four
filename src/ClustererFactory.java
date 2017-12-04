@@ -14,14 +14,15 @@ public class ClustererFactory {
     /* PSO Parameters */
     private static final int numParticles = 100;
     private static final int maxIterations = 10000;
+    private static final double inertia = 1.0;
 
     /* Competitive Network Parameters */
     private static final int numInputNeurons = 10;
     private static final double learningRate = 0.2;
 
     /* DBSCAN Parameters */
-    private static final int minPoints = 8;
-    private static final double epsilon = 8;
+    private static final int minPoints = 6;
+    private static final double epsilon = 17;
 
 
     public static IDataClusterer buildClusterer(ClustererType type) {
@@ -29,7 +30,7 @@ public class ClustererFactory {
             case ACOClusterer:
                 return new ACOClusterer(numAnts, k1, k2, radius);
             case PSOClusterer:
-                return new PSOClusterer(numClusters, numParticles, maxIterations);
+                return new PSOClusterer(numClusters, numParticles, maxIterations, inertia);
             case CompetitiveNetwork:
                 return new CompetitiveLearning(numInputNeurons, numClusters, learningRate);
             case DBSCAN:

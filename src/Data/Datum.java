@@ -19,7 +19,7 @@ public class Datum {
         double distance = 0.0;
 
         for (int i = 0; i < features.length; i++) {
-            distance += Math.abs(features[i] - featureVector[i]);
+            distance += Math.pow(features[i] - featureVector[i], 2);
         }
 
         return distance;

@@ -42,19 +42,19 @@ public class Dataset extends ArrayList<Datum> {
         } else {
             double sum = 0.0;
             for (int i = 0; i < vector1.length; i++) {
-                sum += Math.abs(vector1[i] - vector2[i]);
+                sum += Math.pow(vector1[i] - vector2[i], 2);
             }
             return sum / vector1.length;
         }
     }
 
-    // Tabulate the distances between any two point in the dataset.
+    // Tabulate the distances between any two points in the dataset.
     // Expensive! O(n^2), should only be performed once per dataset!
     public void computeDistances() {
         this.parallelStream().forEach(point1 -> this.forEach(point2 -> {
             // Todo: Hash not guaranteed to be unique
             Integer key = Arrays.hashCode(point1.features) + Arrays.hashCode(point2.features);
-            Double distance = point1.computeDistance(point2.features);
+            double distance = point1.computeDistance(point2.features);
             this.distances.putIfAbsent(key, distance);
         }));
     }

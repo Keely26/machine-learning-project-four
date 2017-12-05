@@ -23,12 +23,13 @@ public class Clustering extends ArrayList<Cluster> {
             return Double.NEGATIVE_INFINITY;
         }
 
+        this.forEach(this::getClusterCenter);
+
         double avgClusterSimilarity = 0;    // Larger is better
         for (int i = 0; i < this.size(); i++) {
             avgClusterSimilarity += computeSimilarity(this.get(i));
         }
         avgClusterSimilarity /= Math.pow(this.size(), 5);
-
 
         double avgCusterSeparation = 0;     // Larger is better
         for (int i = 0; i < this.size(); i++) {
@@ -62,6 +63,24 @@ public class Clustering extends ArrayList<Cluster> {
 
     public double getClusterQuality() {
         return this.clusterQuality;
+    }
+
+    private void getClusterCenter(Cluster cluster) {
+        double[] avgVector = new double[cluster.get(0).features.length];
+
+        // Sum feature values for all elements in the cluster
+        cluster.forEach(sample -> {
+            for (int i = 0, bound = sample.features.length; i < bound; i++) {
+                avgVector[i] += sample.features[i];
+            }
+        });
+
+        // Normalize
+        for (int i = 0, bound = avgVector.length; i < bound; i++) {
+            avgVector[i] /= cluster.size();
+        }
+
+        cluster.setClusterCenter(avgVector);
     }
 
     @Override

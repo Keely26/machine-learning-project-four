@@ -7,10 +7,10 @@ public class Tester {
 
     public static void main(String[] args) {
 
-        Dataset dataset = DatasetBuilder.buildDataSet(DatasetType.Glass);
-        IDataClusterer psoClusterer = ClustererFactory.buildClusterer(ClustererType.PSOClusterer);
-        Clustering clustering = psoClusterer.cluster(dataset);
-        printClusterStats(clustering, ClustererType.PSOClusterer);
+        Dataset dataset = DatasetBuilder.buildDataSet(DatasetType.Iris);
+        IDataClusterer clusterer = ClustererFactory.buildClusterer(ClustererType.DBSCAN);
+        Clustering clustering = clusterer.cluster(dataset);
+        printClusterStats(clustering, ClustererType.DBSCAN);
         //  findGoodParams(DatasetBuilder.buildDataSet(DatasetType.Glass));
 
         /* Build datasets */

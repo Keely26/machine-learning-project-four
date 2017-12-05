@@ -36,7 +36,7 @@ public class Tester {
             System.out.println("No clusters!");
             return;
         }
-        double quality = clusters.evaluateClusters();
+        double quality = clusters.evaluate();
         System.out.println(type.toString());
         System.out.println("Quality: " + quality);
         for (Cluster cluster : clusters) {

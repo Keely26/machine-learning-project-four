@@ -63,7 +63,7 @@ public class PSOClusterer implements IDataClusterer {
 
                 for (int k = 0; k < startingPosition.length; k++) {
                     startingPosition[k] = Utilities.randomDouble(minValues[k], maxValues[k]);
-                    startingVelocity[k] = Utilities.randomDouble(0, Math.sqrt(maxValues[k]));
+                    startingVelocity[k] = 0;//Utilities.randomDouble(0, Math.sqrt(maxValues[k]));
                 }
                 initialClusterCenters.add(startingPosition);
                 initialCenterVelocities.add(startingVelocity);
@@ -120,7 +120,7 @@ public class PSOClusterer implements IDataClusterer {
         System.out.print("Iteration: " + iteration);
         System.out.println(", best clustering:");
         System.out.println(currentBest.toString());
-        System.out.println("Quality: " + currentBest.evaluateClusters());
+        System.out.println("Quality: " + currentBest.getClusterQuality());
         System.out.println();
     }
 }

@@ -68,7 +68,7 @@ public class KMeans implements IDataClusterer {
             averageCluster();
             //evaluate clusters
             System.out.println("Epoch: " + epoch + "\t\t");
-            clustering.evaluateClusters();
+            clustering.evaluate();
             epoch++;
         }
         return clustering;

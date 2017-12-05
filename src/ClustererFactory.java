@@ -1,9 +1,10 @@
 import Clusterers.*;
 
+@SuppressWarnings("WeakerAccess")
 public class ClustererFactory {
 
     /* Universal Parameters */
-    private static final int numClusters = 6;
+    private static final int numClusters = 3;
 
     /* ACO Parameters */
     private static final int numAnts = 50;
@@ -14,7 +15,7 @@ public class ClustererFactory {
 
     /* PSO Parameters */
     private static final int numParticles = 30;
-    private static final int maxIterations = 200;
+    private static final int maxIterations = 5;
     private static final double inertia = 1.0;
 
     /* Competitive Network Parameters */
@@ -24,7 +25,6 @@ public class ClustererFactory {
     /* DBSCAN Parameters */
     private static final int minPoints = 6;
     private static final double epsilon = 17;
-
 
     public static IDataClusterer buildClusterer(ClustererType type) {
         switch (type) {

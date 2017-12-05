@@ -1,5 +1,7 @@
 package Data;
 
+import Utilites.Utilities;
+
 import java.util.*;
 
 public class Dataset extends ArrayList<Datum> {
@@ -52,11 +54,12 @@ public class Dataset extends ArrayList<Datum> {
     // Expensive! O(n^2), should only be performed once per dataset!
     public void computeDistances() {
         for (Datum point1 : this) {
-            for (Datum point2 : this) {// Todo: Hash not guaranteed to be unique
-                Integer key = Arrays.hashCode(point1.features) + Arrays.hashCode(point2.features);
-                double distance = point1.computeDistance(point2.features);
-                this.distances.putIfAbsent(key, distance);
-            }
+            this.parallelStream()
+                    .filter(point2 -> !Objects.equals(point1, point2))
+                    .forEach(point2 -> this.distances.putIfAbsent(
+                            Arrays.hashCode(point1.features) + Arrays.hashCode(point2.features),
+                            Utilities.computeDistance(point1.features, point2.features)));
         }
     }
 }
+

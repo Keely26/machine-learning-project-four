@@ -5,11 +5,12 @@ import Data.*;
 import java.io.*;
 import java.util.Random;
 
+@SuppressWarnings("WeakerAccess")
 public class Utilities {
 
-    public static final Random random = new Random(System.nanoTime());
+    private static final Random random = new Random(System.nanoTime());
 
-    public static Clustering assignClusters(Dataset dataset, Clustering clustering) {
+    public static void assignClusters(Dataset dataset, Clustering clustering) {
         // For each element in the dataset, add it to the nearest cluster
         for (Datum datum : dataset) {
             Cluster nearestCluster = clustering.get(0);
@@ -23,7 +24,17 @@ public class Utilities {
             }
             nearestCluster.add(datum);
         }
-        return clustering;
+    }
+
+    public static double computeDistance(double[] point1, double[] point2) {
+        assert point1.length == point2.length : "Non-congruent dimensions!";
+
+        double sum = 0.0;
+        for (int i = 0; i < point1.length; i++) {
+            sum += Math.pow(point1[i] - point2[i], 2);
+        }
+
+        return Math.sqrt(sum);
     }
 
     public static Integer randomInteger(int bound) {

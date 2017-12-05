@@ -4,6 +4,7 @@ import Data.Dataset;
 
 import java.util.ArrayList;
 
+@SuppressWarnings("WeakerAccess")
 public class Swarm extends ArrayList<Particle> {
 
     private Particle globalBest;

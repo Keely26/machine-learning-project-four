@@ -5,6 +5,7 @@ import Utilites.Utilities;
 
 import java.util.List;
 
+@SuppressWarnings("WeakerAccess")
 public class Particle {
 
     private List<double[]> position;
@@ -12,9 +13,6 @@ public class Particle {
     private List<double[]> velocities;
     private double personalBestQuality = Double.NEGATIVE_INFINITY;
     private double inertia;
-
-    public Particle() {
-    }
 
     public Particle(List<double[]> position, List<double[]> velocities, double inertia) {
         this.position = position;
@@ -29,10 +27,9 @@ public class Particle {
             clustering.add(new Cluster(centerVector));
         }
 
-        // Build clustering
-        clustering = Utilities.assignClusters(dataset, clustering);
+        Utilities.assignClusters(dataset, clustering);
 
-        double currentQuality = clustering.evaluateClusters();
+        double currentQuality = clustering.evaluate();
         if (currentQuality > this.personalBestQuality) {
             this.personalBest = this.position;
             this.personalBestQuality = currentQuality;
@@ -68,14 +65,11 @@ public class Particle {
     public Clustering getPersonalBest(Dataset dataset) {
         Clustering clustering = new Clustering();
         this.personalBest.forEach(center -> clustering.add(new Cluster(center)));
-        return Utilities.assignClusters(dataset, clustering);
+        Utilities.assignClusters(dataset, clustering);
+        return clustering;
     }
 
     public List<double[]> getPosition() {
         return position;
-    }
-
-    public List<double[]> getVelocities() {
-        return velocities;
     }
 }

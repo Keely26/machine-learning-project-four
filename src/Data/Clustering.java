@@ -6,7 +6,7 @@ import java.util.List;
 public class Clustering extends ArrayList<Cluster> {
 
     private double clusterQuality = Double.MAX_VALUE;
-    private double emptyClusterPenalty = 1000000000;
+    private double emptyClusterPenalty = -1000000000;
 
     public Clustering(List<Cluster> clusters) {
         super(clusters);
@@ -15,6 +15,48 @@ public class Clustering extends ArrayList<Cluster> {
     public Clustering() {
 
     }
+
+    public double evaluate() {
+        if (this.size() == 0) {
+            return Double.NEGATIVE_INFINITY;
+        }
+
+        double avgClusterSimilarity = 0;    // Larger is better
+        for (int i = 0; i < this.size(); i++) {
+            avgClusterSimilarity += computeSimilarity(this.get(i));
+        }
+        avgClusterSimilarity /= this.size();
+
+
+        double avgCusterSeperation = 0;     // Larger is better
+
+
+
+
+        // Return large value for a strong clustering
+        // A strong clustering has high similarity between the members of each cluster
+        // while having low similarity between the
+
+        return avgClusterSimilarity;
+    }
+
+    private double computeSimilarity(Cluster cluster) {
+        double[] center = cluster.getClusterCenter();
+        double similarity = 0.0;
+
+
+        return similarity;
+    }
+
+
+
+
+
+
+
+
+
+
 
     public double evaluateClusters() {
         if (this.size() == 0) {
@@ -85,5 +127,18 @@ public class Clustering extends ArrayList<Cluster> {
         }
 
         return new Datum(avgVector);
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        for (int i = 0; i < this.size(); i++) {
+            builder.append("Cluster ")
+                    .append(i + 1)
+                    .append(", Points:")
+                    .append(this.get(i).size())
+                    .append("\n");
+        }
+        return builder.toString();
     }
 }

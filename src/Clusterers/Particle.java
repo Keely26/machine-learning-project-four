@@ -4,14 +4,13 @@ import Data.*;
 import Utilites.Utilities;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class Particle {
 
     private List<double[]> position;
     private List<double[]> personalBest;
     private List<double[]> velocities;
-    private double personalBestQuality;
+    private double personalBestQuality = Double.NEGATIVE_INFINITY;
     private double inertia;
 
     public Particle() {
@@ -55,7 +54,6 @@ public class Particle {
             this.position.set(i, updatedCenterPosition);
         }
     }
-
 
     public void updateVelocity(List<double[]> globalBest) {
         for (int i = 0; i < this.velocities.size(); i++) {

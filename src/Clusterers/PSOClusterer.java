@@ -1,10 +1,11 @@
 package Clusterers;
 
-import Data.*;
+import Data.Clustering;
+import Data.Dataset;
 import Utilites.Utilities;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.List;
 
 public class PSOClusterer implements IDataClusterer {
 
@@ -28,31 +29,18 @@ public class PSOClusterer implements IDataClusterer {
 
         int iteration = 0;
         do {
-            System.out.println("Iteration: " + iteration);
-            Particle best = new Particle(particleSwarm.getGlobalBest(), null, 0);
-            Clustering c = Utilities.assignClusters(dataset, particleSwarm.getGlobalBest());
-            c.forEach(cluster -> {
-                System.out.println("Cluster: " + cluster.getClusterId() + ", Count: " + cluster.size());
-            });
+            logIteration(iteration, dataset);
             // For each particle, update position, evaluate, update velocity, set personal and global bests
-            particleSwarm.forEach((Particle particle) -> {
+            particleSwarm.parallelStream().forEach(particle -> {
                 particle.updatePosition();
-                particle.updateVelocity(particleSwarm.getGlobalBest());
+                particle.updateVelocity(particleSwarm.getGlobalBest().getPosition());
             });
-
-            // Evaluate swarm
-            double quality = this.particleSwarm.evaluateSwarm(dataset);
-            System.out.println(", " + quality);
 
             iteration++;
         } while (iteration < maxIterations && notConverged());
 
         // Retrieve best clustering
-        Clustering clustering = this.particleSwarm.getGlobalBest()
-                .stream()
-                .map(Cluster::new)
-                .collect(Collectors.toCollection(Clustering::new));
-        return Utilities.assignClusters(dataset, clustering);
+        return particleSwarm.getGlobalBest().getPersonalBest(dataset);
     }
 
     private boolean notConverged() {
@@ -87,7 +75,7 @@ public class PSOClusterer implements IDataClusterer {
         this.particleSwarm.evaluateSwarm(dataset);
     }
 
-    private static double[] getMinFeatureVector(Dataset dataset) {
+    private double[] getMinFeatureVector(Dataset dataset) {
         double[] minValues = new double[dataset.getFeatureSize()];
 
         // Initialize each element to max value
@@ -107,7 +95,7 @@ public class PSOClusterer implements IDataClusterer {
         return minValues;
     }
 
-    private static double[] getMaxFeatureVector(Dataset dataset) {
+    private double[] getMaxFeatureVector(Dataset dataset) {
         double[] maxValues = new double[dataset.getFeatureSize()];
 
         // Initialize each element to min value
@@ -125,5 +113,14 @@ public class PSOClusterer implements IDataClusterer {
         });
 
         return maxValues;
+    }
+
+    private void logIteration(int iteration, Dataset data) {
+        Clustering currentBest = this.particleSwarm.getGlobalBest().getPersonalBest(data);
+        System.out.print("Iteration: " + iteration);
+        System.out.println(", best clustering:");
+        System.out.println(currentBest.toString());
+        System.out.println("Quality: " + currentBest.evaluateClusters());
+        System.out.println();
     }
 }

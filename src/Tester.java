@@ -14,15 +14,15 @@ public class Tester {
         //  findGoodParams(DatasetBuilder.buildDataSet(DatasetType.Glass));
 
         /* Build datasets */
-//        Dataset glassDataset = DatasetBuilder.buildDataSet(DatasetType.Glass);
+        Dataset glassDataset = DatasetBuilder.buildDataSet(DatasetType.Glass);
 //        Dataset banknoteDataset = DatasetBuilder.buildDataSet(DatasetType.Banknote);
 //        Dataset irisDataset = DatasetBuilder.buildDataSet(DatasetType.Iris);
 //        Dataset parkinsonsDataset = DatasetBuilder.buildDataSet(DatasetType.Parkinsons);
 //        Dataset retinopathyDataset = DatasetBuilder.buildDataSet(DatasetType.Retinopathy);
 
         /* Cluster */
-//        IDataClusterer dbScan = ClustererFactory.buildClusterer(ClustererType.DBSCAN);
-//        Clustering glassClustering = dbScan.cluster(glassDataset);
+    IDataClusterer dbScan = ClustererFactory.buildClusterer(ClustererType.kMeans);
+        Clustering glassClustering = dbScan.cluster(glassDataset);
 //        printClusterStats(glassClustering, ClustererType.DBSCAN);
 
         //  Clustering banknoteClustering = dbScan.cluster(banknoteDataset);

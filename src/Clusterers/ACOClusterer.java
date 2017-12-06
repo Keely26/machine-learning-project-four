@@ -1,6 +1,7 @@
 package Clusterers;
 
 import Data.*;
+import Utilites.Utilities;
 
 import java.util.*;
 
@@ -94,10 +95,10 @@ public class ACOClusterer implements IDataClusterer {
         double avgDistance = 0.0;
         //look to see what points are in radius
         for (Datum point : dataset) {
-            if (point.computeDistance(curLocation) <= radius) {
+            if (Utilities.computeDistance(point.features, curLocation) <= radius) {
                 //compute distance of all points in radius
                 //take average of that
-                avgDistance += point.computeDistance(curLocation);
+                avgDistance += Utilities.computeDistance(point.features, curLocation);
             }
         }
         return avgDistance;

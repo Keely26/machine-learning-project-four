@@ -22,30 +22,26 @@ public class Particle {
     }
 
     public double evaluate(Dataset dataset) {
-        Clustering clustering = new Clustering();
-        for (double[] centerVector : this.position) {
-            clustering.add(new Cluster(centerVector));
-        }
+        Clustering clustering = getClustering(this.position, dataset);
+        double currentQuality = clustering.evaluateFitness();
+        updateBest(currentQuality);
+        return currentQuality;
+    }
 
-        Utilities.assignClusters(dataset, clustering);
-
-        double currentQuality = clustering.evaluate();
+    private void updateBest(double currentQuality) {
         if (currentQuality > this.personalBestQuality) {
             this.personalBest = this.position;
             this.personalBestQuality = currentQuality;
         }
-
-        return currentQuality;
     }
 
     public void updatePosition() {
         for (int i = 0, clusterIndex = this.position.size(); i < clusterIndex; i++) {
             double[] clusterCenter = this.position.get(i);
-            double[] centerVelocity = this.velocities.get(i);
             double[] updatedCenterPosition = new double[clusterCenter.length];
 
             for (int j = 0, length = clusterCenter.length; j < length; j++) {
-                updatedCenterPosition[j] = clusterCenter[j] + centerVelocity[j];
+                updatedCenterPosition[j] = clusterCenter[j] + this.velocities.get(i)[j];
             }
 
             this.position.set(i, updatedCenterPosition);
@@ -62,14 +58,31 @@ public class Particle {
         }
     }
 
-    public Clustering getPersonalBest(Dataset dataset) {
-        Clustering clustering = new Clustering();
-        this.personalBest.forEach(center -> clustering.add(new Cluster(center)));
-        Utilities.assignClusters(dataset, clustering);
-        return clustering;
+    public Clustering getBestClustering(Dataset dataset) {
+        return this.getClustering(this.personalBest, dataset);
     }
 
     public List<double[]> getPosition() {
         return position;
+    }
+
+    private Clustering getClustering(List<double[]> centers, Dataset dataset) {
+        Clustering clustering = new Clustering();
+        centers.forEach(center -> clustering.add(new Cluster(center)));
+
+        dataset.forEach(dataPoint -> {
+            double nearestDistance = Double.MAX_VALUE;
+            int nearestIndex = 0;
+            for (int i = 0; i < clustering.size(); i++) {
+                double currentDistance = Utilities.computeDistance(dataPoint.features, centers.get(i));
+                if (currentDistance < nearestDistance) {
+                    nearestIndex = i;
+                    nearestDistance = currentDistance;
+                }
+            }
+            clustering.get(nearestIndex).add(dataPoint);
+        });
+
+        return clustering;
     }
 }

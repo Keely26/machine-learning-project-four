@@ -18,7 +18,7 @@ public class Swarm extends ArrayList<Particle> {
         return this.globalBest;
     }
 
-    public double evaluateSwarm(Dataset dataset) {
+    public void evaluateSwarm(Dataset dataset) {
         this.forEach(particle -> {
             double quality = particle.evaluate(dataset);
             if (quality > this.globalBestQuality) {
@@ -26,6 +26,5 @@ public class Swarm extends ArrayList<Particle> {
                 this.globalBestQuality = quality;
             }
         });
-        return this.globalBestQuality;
     }
 }

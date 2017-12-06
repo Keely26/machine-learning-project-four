@@ -1,5 +1,6 @@
 package Data;
 
+@SuppressWarnings("WeakerAccess")
 public class Cluster extends Dataset {
 
     private int clusterId;
@@ -32,5 +33,20 @@ public class Cluster extends Dataset {
 
     public void setClusterCenter(double[] clusterCenter) {
         this.clusterCenter = clusterCenter;
+    }
+
+    public double[] getCentroid() {
+        double[] centroid = new double[this.getFeatureSize()];
+
+        for (Datum datum : this) {
+            for (int j = 0; j < centroid.length; j++) {
+                centroid[j] += datum.features[j];
+            }
+        }
+        for (int i = 0; i < centroid.length; i++) {
+            centroid[i] /= this.size();
+        }
+
+        return centroid;
     }
 }

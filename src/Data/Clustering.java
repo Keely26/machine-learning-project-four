@@ -18,70 +18,29 @@ public class Clustering extends ArrayList<Cluster> {
 
     }
 
-    public double evaluate() {
-        if (this.size() == 0) {
-            return Double.NEGATIVE_INFINITY;
-        }
+    public double evaluateFitness() {
+        double fitness = 0.0;
 
-        this.forEach(this::getClusterCenter);
-
-        double avgClusterSimilarity = 0;    // Larger is better
-        for (int i = 0; i < this.size(); i++) {
-            avgClusterSimilarity += computeSimilarity(this.get(i));
-        }
-        avgClusterSimilarity /= Math.pow(this.size(), 5);
-
-        double avgCusterSeparation = 0;     // Larger is better
-        for (int i = 0; i < this.size(); i++) {
-            for (int j = i + 1; j < this.size(); j++) {
-                double[] centerI = this.get(i).getClusterCenter();
-                double[] centerJ = this.get(j).getClusterCenter();
-                avgCusterSeparation += Utilities.computeDistance(centerI, centerJ);
+        for (Cluster cluster : this) {
+            if (cluster.size() == 0) {
+                continue;
             }
-        }
-        avgCusterSeparation /= this.size();
+            double[] centroid = cluster.getCentroid();
+            double distance = 0.0;
+            for (Datum point : cluster) {
+                distance += Utilities.computeDistance(point.features, centroid);
+            }
 
-        this.clusterQuality = avgClusterSimilarity + avgCusterSeparation;
-        return clusterQuality;
+            fitness += distance / cluster.size();
+        }
+
+        return fitness / this.size();
     }
-
-    private double computeSimilarity(Cluster cluster) {
-        if (cluster.size() == 0) {
-            return this.emptyClusterPenalty;
-        }
-
-        double[] center = cluster.getClusterCenter();
-        double similarity = 0.0;
-
-        for (Datum point : cluster) {
-            similarity += Utilities.computeDistance(point.features, center);
-        }
-
-        return similarity / cluster.size();
-    }
-
 
     public double getClusterQuality() {
         return this.clusterQuality;
     }
 
-    private void getClusterCenter(Cluster cluster) {
-        double[] avgVector = new double[cluster.get(0).features.length];
-
-        // Sum feature values for all elements in the cluster
-        cluster.forEach(sample -> {
-            for (int i = 0, bound = sample.features.length; i < bound; i++) {
-                avgVector[i] += sample.features[i];
-            }
-        });
-
-        // Normalize
-        for (int i = 0, bound = avgVector.length; i < bound; i++) {
-            avgVector[i] /= cluster.size();
-        }
-
-        cluster.setClusterCenter(avgVector);
-    }
 
     @Override
     public String toString() {

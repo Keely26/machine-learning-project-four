@@ -40,7 +40,7 @@ public class PSOClusterer implements IDataClusterer {
         } while (iteration < maxIterations && notConverged());
 
         // Retrieve best clustering
-        return particleSwarm.getGlobalBest().getPersonalBest(dataset);
+        return particleSwarm.getGlobalBest().getBestClustering(dataset);
     }
 
     private boolean notConverged() {
@@ -54,7 +54,7 @@ public class PSOClusterer implements IDataClusterer {
         double[] minValues = getMinFeatureVector(dataset);
 
         for (int i = 0; i < this.numParticles; i++) {
-            List<double[]> initialClusterCenters = new ArrayList<>();
+            List<double[]> initialCenterPositions = new ArrayList<>();
             List<double[]> initialCenterVelocities = new ArrayList<>();
 
             for (int j = 0; j < this.numClusters; j++) {
@@ -63,13 +63,13 @@ public class PSOClusterer implements IDataClusterer {
 
                 for (int k = 0; k < startingPosition.length; k++) {
                     startingPosition[k] = Utilities.randomDouble(minValues[k], maxValues[k]);
-                    startingVelocity[k] = 0;//Utilities.randomDouble(0, Math.sqrt(maxValues[k]));
+                    startingVelocity[k] = Utilities.randomDouble(0, Math.sqrt(maxValues[k]));
                 }
-                initialClusterCenters.add(startingPosition);
+                initialCenterPositions.add(startingPosition);
                 initialCenterVelocities.add(startingVelocity);
             }
 
-            this.particleSwarm.add(new Particle(initialClusterCenters, initialCenterVelocities, this.inertia));
+            this.particleSwarm.add(new Particle(initialCenterPositions, initialCenterVelocities, this.inertia));
         }
 
         this.particleSwarm.evaluateSwarm(dataset);
@@ -115,8 +115,8 @@ public class PSOClusterer implements IDataClusterer {
         return maxValues;
     }
 
-    private void logIteration(int iteration, Dataset data) {
-        Clustering currentBest = this.particleSwarm.getGlobalBest().getPersonalBest(data);
+    private void logIteration(int iteration, Dataset dataset) {
+        Clustering currentBest = this.particleSwarm.getGlobalBest().getBestClustering(dataset);
         System.out.print("Iteration: " + iteration);
         System.out.println(", best clustering:");
         System.out.println(currentBest.toString());

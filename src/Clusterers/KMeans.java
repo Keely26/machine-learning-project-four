@@ -1,6 +1,7 @@
 package Clusterers;
 
 import Data.*;
+import Utilites.Utilities;
 
 import java.util.*;
 
@@ -51,12 +52,11 @@ public class KMeans implements IDataClusterer {
 
 
             for (Datum datum : dataset) {
-
-                double minDist = datum.computeDistance(clusters[0].getClusterCenter());
+                double minDist = Utilities.computeDistance(datum.features, clusters[0].getClusterCenter());
                 int clusterId = 0;
 
                 for (int j = 1; j < numClusters; j++) {
-                    double currentDist = datum.computeDistance(clusters[j].getClusterCenter());
+                    double currentDist = Utilities.computeDistance(datum.features, clusters[j].getClusterCenter());
 
                     if (currentDist < minDist) {
                         minDist = currentDist;
@@ -86,8 +86,9 @@ public class KMeans implements IDataClusterer {
             averageCluster();
 
             //evaluate clusters
-            System.out.print("Epoch: " + epoch + "\t\t");
-            //clustering.evaluateClusters();
+            System.out.println("Epoch: " + epoch + "\t\t");
+            clustering.evaluateFitness();
+
             epoch++;
         }
         return clustering;

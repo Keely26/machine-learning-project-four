@@ -1,7 +1,11 @@
 package Utilites;
 
+import Data.*;
+
 import java.io.*;
+import java.util.List;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 @SuppressWarnings("WeakerAccess")
 public class Utilities {
@@ -18,6 +22,26 @@ public class Utilities {
 
         return Math.sqrt(sum);
     }
+
+    public static Clustering assignPointsToClusters(Dataset dataset, List<double[]> centroids) {
+        Clustering clustering = centroids.stream().map(Cluster::new).collect(Collectors.toCollection(Clustering::new));
+
+        for (Datum dataPoint : dataset) {
+            int nearestIndex = -1;
+            double nearestDistance = Double.MAX_VALUE;
+            for (int j = 0; j < clustering.size(); j++) {
+                double distance = Utilities.computeDistance(dataPoint.features, clustering.get(j).getClusterCenter());
+                if (distance < nearestDistance) {
+                    nearestIndex = j;
+                    nearestDistance = distance;
+                }
+            }
+            clustering.get(nearestIndex).add(dataPoint);
+        }
+
+        return clustering;
+    }
+
 
     public static Integer randomInteger(int bound) {
         return random.nextInt(bound);

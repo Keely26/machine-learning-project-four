@@ -10,7 +10,7 @@ import java.util.List;
 
 public class Tester {
 
-    private static boolean loggingEnabled = false;
+    private static boolean loggingEnabled = true;
 
     private static DecimalFormat doubleFormatter = new DecimalFormat("#.####");
 

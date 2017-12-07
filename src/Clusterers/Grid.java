@@ -1,6 +1,7 @@
 package Clusterers;
 
 import Data.Dataset;
+import Clusterers.AntColonyOptimization.Ant;
 
 import java.util.Random;
 import Data.Datum;
@@ -64,7 +65,7 @@ public class Grid {
     }
 
 
-
+/*
 
     public void updateLocationStatus(int x, int y, Dataset dataset, List<Ant> ants, int[][] searchSpace) {
 
@@ -79,6 +80,7 @@ public class Grid {
                 }
             }
         }
+        */
 
-    }
+}
 

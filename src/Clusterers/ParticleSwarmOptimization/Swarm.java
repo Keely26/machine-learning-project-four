@@ -1,13 +1,14 @@
-package Clusterers;
+package Clusterers.ParticleSwarmOptimization;
 
 import Data.Dataset;
 
 import java.util.ArrayList;
 
+@SuppressWarnings("WeakerAccess")
 public class Swarm extends ArrayList<Particle> {
 
     private Particle globalBest;
-    private double globalBestQuality;
+    private double globalBestQuality = Double.MIN_VALUE;
 
     public Swarm(int size) {
         super(size);

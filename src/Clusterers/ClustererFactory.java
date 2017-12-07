@@ -1,4 +1,10 @@
-import Clusterers.*;
+package Clusterers;
+
+import Clusterers.AntColonyOptimization.ACOClusterer;
+import Clusterers.CompetitiveLearning.CompetitiveLearning;
+import Clusterers.DBSCAN.DBSCAN;
+import Clusterers.KMeans.KMeans;
+import Clusterers.ParticleSwarmOptimization.PSOClusterer;
 
 public class ClustererFactory {
 
@@ -12,27 +18,27 @@ public class ClustererFactory {
     private static final double radius = 10.0;
     private static final double gamma = 2.0;
 
-
     /* PSO Parameters */
-    private static final int numParticles = 100;
-    private static final int maxIterations = 10000;
-    private static final double inertia = 1.0;
+    private static final int numParticles = 1000;
+    private static final int maxIterations = 100;
+    private static final double inertia = 0.72;
+    private static final double cognitiveWeight = 1.49;
+    private static final double socialWeight = 1.49;
 
     /* Competitive Network Parameters */
     private static final int numInputNeurons = 10;
     private static final double learningRate = 0.2;
 
     /* DBSCAN Parameters */
-    private static final int minPoints = 6;
-    private static final double epsilon = 17;
-
+    private static final int minPoints = 407;
+    private static final double epsilon = 1.5;
 
     public static IDataClusterer buildClusterer(ClustererType type) {
         switch (type) {
             case ACOClusterer:
                 return new ACOClusterer(numAnts, k1, k2, radius, gamma);
             case PSOClusterer:
-                return new PSOClusterer(numClusters, numParticles, maxIterations, inertia);
+                return new PSOClusterer(numClusters, numParticles, maxIterations, inertia, cognitiveWeight, socialWeight);
             case CompetitiveNetwork:
                 return new CompetitiveLearning(numInputNeurons, numClusters, learningRate);
             case DBSCAN:

@@ -33,4 +33,22 @@ public class Cluster extends Dataset {
     public void setClusterCenter(double[] clusterCenter) {
         this.clusterCenter = clusterCenter;
     }
+
+    double[] getCentroid() {
+        if (this.size() == 0) {
+            return this.clusterCenter;
+        }
+        double[] centroid = new double[this.getFeatureSize()];
+
+        for (Datum datum : this) {
+            for (int j = 0; j < centroid.length; j++) {
+                centroid[j] += datum.features[j];
+            }
+        }
+        for (int i = 0; i < centroid.length; i++) {
+            centroid[i] /= this.size();
+        }
+
+        return centroid;
+    }
 }

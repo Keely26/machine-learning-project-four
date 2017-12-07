@@ -1,6 +1,8 @@
-package Clusterers;
+package Clusterers.CompetitiveLearning;
 
+import Clusterers.IDataClusterer;
 import Data.*;
+import Utilites.Utilities;
 
 import java.util.*;
 
@@ -50,11 +52,11 @@ public class CompetitiveLearning implements IDataClusterer {
                 recluster = false;
                 //calculate the distance between each output neuron and the features
                 //save the output that has the minimum distance
-                double minDist = datum.computeDistance(outputs.get(0).getFeatureOrCenter());
+                double minDist = Utilities.computeDistance(datum.features, outputs.get(0).getFeatureOrCenter());
                 int clusterID = 0;
 
                 for (int i = 1; i < outputs.size(); i++) {
-                    double currentDist = datum.computeDistance(outputs.get(i).getFeatureOrCenter());
+                    double currentDist = Utilities.computeDistance(datum.features, outputs.get(i).getFeatureOrCenter());
 
                     if (currentDist < minDist) {
                         minDist = currentDist;
@@ -72,7 +74,7 @@ public class CompetitiveLearning implements IDataClusterer {
             }
             //evaluate clusters
             System.out.println("Epoch: " + epoch + "\t\t");
-            clustering.evaluateClusters();
+            clustering.evaluateFitness();
             epoch++;
         }
 
@@ -100,5 +102,10 @@ public class CompetitiveLearning implements IDataClusterer {
             newCenter[c] = learningRate * (inputs.get(c).getFeatureOrCenter()[0] - newCenter[c]);
         }
         return newCenter;
+    }
+
+    @Override
+    public String toString() {
+        return "Competitive Learning Network";
     }
 }

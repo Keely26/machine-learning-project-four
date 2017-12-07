@@ -1,12 +1,18 @@
-package Clusterers;
+package Clusterers.AntColonyOptimization;
 
 import Data.Clustering;
 import Data.Dataset;
 import Data.Datum;
+import Clusterers.Grid;
+
 
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+
+import Clusterers.IDataClusterer;
+
+
 
 public class ACOClusterer implements IDataClusterer {
 
@@ -15,14 +21,7 @@ public class ACOClusterer implements IDataClusterer {
 
     private List<Ant> ants;
     double density;
-    int x;
-    int y;
-    int numSurroundingCorpses;
-    int numSurroundingVancant;
-    int numSurroundingAnts;
-    int[] antPosition;
     HashMap<Integer, Datum> distances = new HashMap<>();
-    HashMap<Integer, Datum> gridDistances = new HashMap<>();
 
 
     public ACOClusterer(int numAnts, double k1, double k2, double radius, double gamma) {
@@ -31,7 +30,6 @@ public class ACOClusterer implements IDataClusterer {
         this.k2 = k2;
         this.radius = radius;
         this.gamma = gamma;
-
     }
 
     @Override
@@ -50,7 +48,7 @@ public class ACOClusterer implements IDataClusterer {
             Ant.move(k, k.x, k.y, grid);
             Datum dataPoint = Grid.getDataPoint(grid, k.x, k.y);
             //if ant is not carrying and site has data point
-            if (k.carrying == null && dataPoint != null) { //TODO && !.isVacant
+            if (k.carrying == null && dataPoint != null) {
                 density = similarityFunction(radius, dataset, k, grid);
                 double Pp = probPickUp(k1, density);
                 //TODO check if U(1,0) <= prob pick up is same as below
@@ -59,7 +57,7 @@ public class ACOClusterer implements IDataClusterer {
                 }
             }
             //else if ant is carrying item and site is empty
-            if (k.carrying != null && dataPoint == null) { //TODO && isVacant
+            if (k.carrying != null && dataPoint == null) {
                 density = similarityFunction(radius, dataset, k, grid);
                 double Pd = probDrop(k2, density);
                 //if U(1,0) <= prob dropping
@@ -72,6 +70,11 @@ public class ACOClusterer implements IDataClusterer {
             Ant.move(k, k.x, k.y, grid);
         }
         return null;
+    }
+
+    @Override
+    public String toString() {
+        return "Ant Colony Optimization";
     }
 
 
@@ -98,10 +101,10 @@ public class ACOClusterer implements IDataClusterer {
         return probability;
     }
 
+
     private void pickUp(Ant ant, Datum dataPoint, Datum[][] grid) {
         ant.carrying = dataPoint;
         //Grid.getDataPoint(grid, ant.x, ant.y) = null;
-
     }
 
     private void drop(Ant ant, Datum corpse, Datum[][] grid) {

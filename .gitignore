@@ -3,3 +3,15 @@
 *.png
 *.mdj
 out/*
+*.class
+*.ctxt
+*.jar
+*.war
+*.ear
+hs_err_pid*
+.gradle
+/build/
+gradle-app.setting
+!gradle-wrapper.jar
+.gradletasknamecache
+# gradle/wrapper/gradle-wrapper.properties

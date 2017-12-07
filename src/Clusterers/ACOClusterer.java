@@ -121,11 +121,5 @@ public class ACOClusterer implements IDataClusterer {
         return dataPoint;
     }
 
-
-    private int[] getDataPointGridLocation(Datum dataPoint, int x, int y) {
-        int[] datapointPosition = new int[]{x, y};
-        return datapointPosition;
-    }
-
 }
 

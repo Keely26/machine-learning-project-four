@@ -51,11 +51,13 @@ public class Dataset extends ArrayList<Datum> {
     // Tabulate the distances between any two points in the dataset.
     // Expensive! O(n^2), should only be performed once per dataset!
     public void computeDistances() {
-        this.parallelStream().forEach(point1 -> this.forEach(point2 -> {
-            // Todo: Hash not guaranteed to be unique
-            Integer key = Arrays.hashCode(point1.features) + Arrays.hashCode(point2.features);
-            double distance = point1.computeDistance(point2.features);
-            this.distances.putIfAbsent(key, distance);
-        }));
+        for (Datum point1 : this) {
+            for (Datum point2 : this) {
+                // Todo: Hash not guaranteed to be unique
+                Integer key = Arrays.hashCode(point1.features) + Arrays.hashCode(point2.features);
+                double distance = point1.computeDistance(point2.features);
+                this.distances.putIfAbsent(key, distance);
+            }
+        }
     }
 }

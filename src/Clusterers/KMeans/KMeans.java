@@ -1,5 +1,6 @@
-package Clusterers;
+package Clusterers.KMeans;
 
+import Clusterers.IDataClusterer;
 import Data.*;
 import Utilites.Utilities;
 
@@ -17,7 +18,6 @@ public class KMeans implements IDataClusterer {
     private ArrayList<ArrayList<Datum>> clusterSet;
     private Cluster[] clusters;
 
-
     public KMeans(int numClusters) {
         this.numClusters = numClusters;
         clusters = new Cluster[numClusters];
@@ -27,11 +27,9 @@ public class KMeans implements IDataClusterer {
     @Override
     public Clustering cluster(Dataset dataset) {
         Clustering clustering = new Clustering();
-
-
-        //randomly select numCluster cluster centers
-        //create new cluster with them; set clusterID to be equal to the index in clusters
-        //swaps chosen indices to end and then excludes them
+        // Randomly select numCluster cluster centers
+        // Create new cluster with them; set clusterID to be equal to the index in clusters
+        // Swaps chosen indices to end and then excludes them
         Random random = new Random();
         for (int i = 0; i < numClusters; i++) {
 
@@ -65,11 +63,10 @@ public class KMeans implements IDataClusterer {
                 }
 
 
-
                 if (!(clusterSet.get(clusterId).contains(datum))) {
                     //remove from previous cluster
-                    for(int i = 0; i < numClusters; i++){
-                        if( clusterSet.get(i).contains(datum)){
+                    for (int i = 0; i < numClusters; i++) {
+                        if (clusterSet.get(i).contains(datum)) {
                             clusterSet.get(i).remove(datum);
                             clusterSet.get(i).trimToSize();
                         }
@@ -104,7 +101,7 @@ public class KMeans implements IDataClusterer {
 
 
                 for (int d = 0; d < clusterSet.get(i).size(); d++) {
-                    if(clusterSet.get(i).get(d).features.length == 10) {
+                    if (clusterSet.get(i).get(d).features.length == 10) {
 
                         sumFeature += clusterSet.get(i).get(d).features[f];
                     }

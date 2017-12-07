@@ -1,4 +1,9 @@
 import Clusterers.*;
+import Clusterers.AntColonyOptimization.ACOClusterer;
+import Clusterers.CompetitiveLearning.CompetitiveLearning;
+import Clusterers.DBSCAN.DBSCAN;
+import Clusterers.KMeans.KMeans;
+import Clusterers.ParticleSwarmOptimization.PSOClusterer;
 
 @SuppressWarnings("WeakerAccess")
 public class ClustererFactory {

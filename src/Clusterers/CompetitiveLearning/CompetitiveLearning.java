@@ -1,5 +1,6 @@
-package Clusterers;
+package Clusterers.CompetitiveLearning;
 
+import Clusterers.IDataClusterer;
 import Data.*;
 import Utilites.Utilities;
 

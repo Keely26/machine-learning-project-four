@@ -1,4 +1,4 @@
-package Clusterers;
+package Clusterers.ParticleSwarmOptimization;
 
 import Data.Dataset;
 

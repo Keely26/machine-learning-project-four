@@ -1,4 +1,4 @@
-package Clusterers;
+package Clusterers.CompetitiveLearning;
 
 public class Neuron {
 

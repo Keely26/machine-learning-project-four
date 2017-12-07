@@ -1,5 +1,6 @@
-package Clusterers;
+package Clusterers.DBSCAN;
 
+import Clusterers.IDataClusterer;
 import Data.*;
 
 import java.util.stream.Collectors;

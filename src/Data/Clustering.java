@@ -2,13 +2,9 @@ package Data;
 
 import Utilites.Utilities;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class Clustering extends ArrayList<Cluster> {
-
-    private double clusterQuality = Double.MAX_VALUE;
-    private double emptyClusterPenalty = -1000000000;
 
     public Clustering(List<Cluster> clusters) {
         super(clusters);
@@ -34,13 +30,18 @@ public class Clustering extends ArrayList<Cluster> {
             fitness += distance / cluster.size();
         }
 
-        return fitness / this.size();
+        return fitness / this.getSize();
     }
 
-    public double getClusterQuality() {
-        return this.clusterQuality;
+    private int getSize() {
+        int num = 0;
+        for (int i = 0; i < this.size(); i++) {
+            if (this.get(i).size() > 0) {
+                num++;
+            }
+        }
+        return num;
     }
-
 
     @Override
     public String toString() {
@@ -49,7 +50,10 @@ public class Clustering extends ArrayList<Cluster> {
             builder.append("Cluster ")
                     .append(i + 1)
                     .append(", Points:")
+                    .append("\t")
                     .append(this.get(i).size())
+                    .append("\t")
+                    .append(Arrays.toString(this.get(i).getClusterCenter()))
                     .append("\n");
         }
         return builder.toString();

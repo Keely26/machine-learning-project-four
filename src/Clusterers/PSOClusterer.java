@@ -13,14 +13,19 @@ public class PSOClusterer implements IDataClusterer {
     private final int numParticles;
     private final int maxIterations;
     private final double inertia;
+    private final double cognitiveWeight;
+    private final double socialWeight;
 
     private Swarm particleSwarm;
 
-    public PSOClusterer(int numClusters, int numParticles, int maxIterations, double inertia) {
+    public PSOClusterer(int numClusters, int numParticles, int maxIterations, double inertia,
+                        double cognitiveWeight, double socialWeight) {
         this.numClusters = numClusters;
         this.numParticles = numParticles;
         this.maxIterations = maxIterations;
         this.inertia = inertia;
+        this.cognitiveWeight = cognitiveWeight;
+        this.socialWeight = socialWeight;
     }
 
     @Override
@@ -69,7 +74,8 @@ public class PSOClusterer implements IDataClusterer {
                 initialCenterVelocities.add(startingVelocity);
             }
 
-            this.particleSwarm.add(new Particle(initialCenterPositions, initialCenterVelocities, this.inertia));
+            this.particleSwarm.add(new Particle(initialCenterPositions, initialCenterVelocities, this.inertia,
+                    this.cognitiveWeight, this.socialWeight));
         }
 
         this.particleSwarm.evaluateSwarm(dataset);
@@ -120,7 +126,7 @@ public class PSOClusterer implements IDataClusterer {
         System.out.print("Iteration: " + iteration);
         System.out.println(", best clustering:");
         System.out.println(currentBest.toString());
-        System.out.println("Quality: " + currentBest.getClusterQuality());
+        System.out.println("Quality: " + currentBest.evaluateFitness());
         System.out.println();
     }
 }

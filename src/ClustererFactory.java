@@ -14,9 +14,11 @@ public class ClustererFactory {
     private static final double gamma = 2.0;
 
     /* PSO Parameters */
-    private static final int numParticles = 30;
-    private static final int maxIterations = 100;
-    private static final double inertia = 1.0;
+    private static final int numParticles = 1000;
+    private static final int maxIterations = 10;
+    private static final double inertia = 0.72;
+    private static final double cognitiveWeight = 1.49;
+    private static final double socialWeight = 1.49;
 
     /* Competitive Network Parameters */
     private static final int numInputNeurons = 10;
@@ -31,7 +33,7 @@ public class ClustererFactory {
             case ACOClusterer:
                 return new ACOClusterer(numAnts, k1, k2, radius, gamma);
             case PSOClusterer:
-                return new PSOClusterer(numClusters, numParticles, maxIterations, inertia);
+                return new PSOClusterer(numClusters, numParticles, maxIterations, inertia, cognitiveWeight, socialWeight);
             case CompetitiveNetwork:
                 return new CompetitiveLearning(numInputNeurons, numClusters, learningRate);
             case DBSCAN:

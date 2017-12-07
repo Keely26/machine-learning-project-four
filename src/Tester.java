@@ -42,8 +42,8 @@ public class Tester {
                 IDataClusterer DBSCAN = new DBSCAN(i, j);
                 Clustering clustering = DBSCAN.cluster(dataset);
                 printClusterStats(clustering, ClustererType.DBSCAN);
-                if (clustering.getClusterQuality() > bestQuality) {
-                    bestQuality = clustering.getClusterQuality();
+                if (clustering.evaluateFitness() > bestQuality) {
+                    bestQuality = clustering.evaluateFitness();
                     minPoints = i;
                     epsilon = j;
                 }

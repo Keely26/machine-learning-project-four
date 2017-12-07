@@ -36,6 +36,9 @@ public class Cluster extends Dataset {
     }
 
     public double[] getCentroid() {
+        if (this.size() == 0) {
+            return null;
+        }
         double[] centroid = new double[this.getFeatureSize()];
 
         for (Datum datum : this) {

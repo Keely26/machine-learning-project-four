@@ -14,7 +14,7 @@ public class Particle {
     private List<double[]> position;
     private List<double[]> personalBest;
     private List<double[]> velocities;
-    private double personalBestQuality = Double.MAX_VALUE;
+    private double personalBestQuality = Double.MIN_VALUE;
 
     public Particle(List<double[]> position, List<double[]> velocities,
                     double inertia, double cognitiveWeight, double socialWeight) {
@@ -34,7 +34,7 @@ public class Particle {
     }
 
     private void updateBest(double currentQuality) {
-        if (currentQuality < this.personalBestQuality) {
+        if (currentQuality > this.personalBestQuality) {
             this.personalBest = this.position;
             this.personalBestQuality = currentQuality;
         }

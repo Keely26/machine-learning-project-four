@@ -4,7 +4,7 @@ import Clusterers.*;
 public class ClustererFactory {
 
     /* Universal Parameters */
-    private static final int numClusters = 3;
+    private static final int numClusters = 4;
 
     /* ACO Parameters */
     private static final int numAnts = 50;
@@ -15,7 +15,7 @@ public class ClustererFactory {
 
     /* PSO Parameters */
     private static final int numParticles = 1000;
-    private static final int maxIterations = 10;
+    private static final int maxIterations = 100;
     private static final double inertia = 0.72;
     private static final double cognitiveWeight = 1.49;
     private static final double socialWeight = 1.49;
@@ -25,8 +25,8 @@ public class ClustererFactory {
     private static final double learningRate = 0.2;
 
     /* DBSCAN Parameters */
-    private static final int minPoints = 6;
-    private static final double epsilon = 17;
+    private static final int minPoints = 407;
+    private static final double epsilon = 1.5;
 
     public static IDataClusterer buildClusterer(ClustererType type) {
         switch (type) {

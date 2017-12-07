@@ -58,6 +58,11 @@ public class ACOClusterer implements IDataClusterer {
         return null;
     }
 
+    @Override
+    public String toString() {
+        return "Ant Colony Optimization";
+    }
+
 
     private void initialize(Dataset dataPoints) {
         int gridSize = dataPoints.size();

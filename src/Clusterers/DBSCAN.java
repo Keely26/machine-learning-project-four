@@ -57,7 +57,7 @@ public class DBSCAN implements IDataClusterer {
      * A point point is defined to be a CorePoint if there are at least minPts other points within an epsilon radius
      */
     private void findCorePoints(Dataset dataset) {
-        dataset.forEach(point -> point.setCore(getNeighbors(point, dataset).size() > this.minPoints));
+        dataset.parallelStream().forEach(point -> point.setCore(getNeighbors(point, dataset).size() > this.minPoints));
     }
 
     private void expandCluster(Datum seedPoint, Dataset dataset) {
@@ -81,5 +81,10 @@ public class DBSCAN implements IDataClusterer {
         return dataset.parallelStream()
                 .filter(neighbor -> !neighbor.equals(sample) && dataset.getDistance(sample, neighbor) < this.epsilon)
                 .collect(Collectors.toCollection(Dataset::new));
+    }
+
+    @Override
+    public String toString() {
+        return "DBSCAN";
     }
 }

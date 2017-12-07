@@ -127,6 +127,13 @@ public class PSOClusterer implements IDataClusterer {
         System.out.println(", best clustering:");
         System.out.println(currentBest.toString());
         System.out.println("Quality: " + currentBest.evaluateFitness());
+        System.out.println("Inter Distance: " + currentBest.evaluateInterClusterDistance());
+        System.out.println("Intra Distance: " + currentBest.evaluateIntraClusterDistance());
         System.out.println();
+    }
+
+    @Override
+    public String toString() {
+        return "Particle Swarm Optimization";
     }
 }

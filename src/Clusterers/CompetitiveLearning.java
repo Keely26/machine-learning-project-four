@@ -102,4 +102,9 @@ public class CompetitiveLearning implements IDataClusterer {
         }
         return newCenter;
     }
+
+    @Override
+    public String toString() {
+        return "Competitive Learning Network";
+    }
 }

@@ -1,17 +1,9 @@
 package Clusterers.AntColonyOptimization;
 
-import Data.Clustering;
-import Data.Dataset;
-import Data.Datum;
-import Clusterers.Grid;
-
-
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-
 import Clusterers.IDataClusterer;
+import Data.*;
 
+import java.util.*;
 
 
 public class ACOClusterer implements IDataClusterer {
@@ -85,10 +77,10 @@ public class ACOClusterer implements IDataClusterer {
             int[] datumLocation = Grid.gridLocation(dataset, grid, neighborhood[i]);
             //int[] x2Coordinates = Grid.getGridLocation(neighborhood[i], ant);
             //double similarity = ((1 / radius) * (getDistance(getDataPointLocation(ant.x, ant.y), neighborhood[i])/dataset.getDistance()));
-            similarity =+ ((1 / radius) * (getDistance(ant.x, ant.y, datumLocation[0], datumLocation[1])/dataset.getDistance(getDataPointLocation(ant.x, ant.y), getDataPointLocation(datumLocation[0], datumLocation[1]))));
+            similarity = +((1 / radius) * (getDistance(ant.x, ant.y, datumLocation[0], datumLocation[1]) / dataset.getDistance(getDataPointLocation(ant.x, ant.y), getDataPointLocation(datumLocation[0], datumLocation[1]))));
 
         }
-        return  similarity;
+        return similarity;
     }
 
     private double probPickUp(double k1, double density) {

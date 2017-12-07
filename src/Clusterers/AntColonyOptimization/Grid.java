@@ -1,11 +1,9 @@
-package Clusterers;
+package Clusterers.AntColonyOptimization;
 
 import Data.Dataset;
-import Clusterers.AntColonyOptimization.Ant;
+import Data.Datum;
 
 import java.util.Random;
-import Data.Datum;
-import java.util.List;
 
 public class Grid {
     Ant ant;
@@ -16,12 +14,12 @@ public class Grid {
     boolean antOccupies = false;
     boolean dataOccupies = false;
 
-    public Grid(Datum[][] grid, int x, int y){
+    public Grid(Datum[][] grid, int x, int y) {
         this.ant = ant;
         this.grid = grid;
     }
 
-    public static Datum[][] createGrid (Dataset dataset) {
+    public static Datum[][] createGrid(Dataset dataset) {
         //TODO
         Datum[][] grid = new Datum[dataset.size()][dataset.size()]; //initializes 2D array of datum
         grid = fillGrid(grid, dataset); //fills grid randomly with data points
@@ -32,7 +30,7 @@ public class Grid {
         int[] gridLocation = new int[2];
         for (int i = 0; i < dataset.size(); i++) {
             for (int j = 0; j < dataset.size(); j++) {
-                if (datum == grid[i][j]){
+                if (datum == grid[i][j]) {
                     gridLocation[0] = i;
                     gridLocation[1] = j;
                 }

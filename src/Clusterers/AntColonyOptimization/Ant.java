@@ -1,14 +1,15 @@
 package Clusterers.AntColonyOptimization;
 
-/**
- * Ant class acts as a container to hold a set of antID numbers, their positions, and their paths
- */
+
 import Data.Dataset;
 import Data.Datum;
 
 import java.util.List;
 import java.util.Random;
 
+/**
+ * Ant class acts as a container to hold a set of antID numbers, their positions, and their paths
+ */
 @SuppressWarnings("WeakerAccess")
 public class Ant {
     boolean isCarrying;
@@ -45,13 +46,13 @@ public class Ant {
         if (Grid.getDataPoint(grid, x, y + 1) == null) { //if above is empty
             x = x;
             y = y + 1;
-        } else if(Grid.getDataPoint(grid, x, y - 1) == null) { //if below is empty
+        } else if (Grid.getDataPoint(grid, x, y - 1) == null) { //if below is empty
             x = x;
             y = y - 1;
-        } else if(Grid.getDataPoint(grid, x + 1, y) == null) { // if right is empty
+        } else if (Grid.getDataPoint(grid, x + 1, y) == null) { // if right is empty
             x = x + 1;
             y = y;
-        } else if(Grid.getDataPoint(grid, x - 1, y) == null) { // if left is empty
+        } else if (Grid.getDataPoint(grid, x - 1, y) == null) { // if left is empty
             x = x - 1;
             y = y;
         }
@@ -67,7 +68,7 @@ public class Ant {
     public Datum[] checkNeighborhood(double radius) {
         //TODO
         //TODO return list of data points in neighborhood
-        Datum[] neighborhood = new Datum[(int)Math.pow(radius, 2)];
+        Datum[] neighborhood = new Datum[(int) Math.pow(radius, 2)];
         return neighborhood;
         /*
             private void checkNeighborhood(double radius, int x, int y, int[] neighborhood, Ant ant, int[][] grid) {
@@ -87,10 +88,6 @@ public class Ant {
         Datum corpse = new Datum(feature);
         return corpse;
     }
-
-
-
-
 
 
 }

@@ -1,6 +1,5 @@
 package Data;
 
-@SuppressWarnings("WeakerAccess")
 public class Cluster extends Dataset {
 
     private int clusterId;
@@ -35,7 +34,7 @@ public class Cluster extends Dataset {
         this.clusterCenter = clusterCenter;
     }
 
-    public double[] getCentroid() {
+    double[] getCentroid() {
         if (this.size() == 0) {
             return this.clusterCenter;
         }

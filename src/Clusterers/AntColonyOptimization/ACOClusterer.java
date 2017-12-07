@@ -26,7 +26,6 @@ public class ACOClusterer implements IDataClusterer {
         this.k2 = k2;
         this.radius = radius;
         this.gamma = gamma;
-
     }
 
     @Override

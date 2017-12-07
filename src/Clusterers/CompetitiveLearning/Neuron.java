@@ -1,5 +1,6 @@
 package Clusterers.CompetitiveLearning;
 
+@SuppressWarnings("WeakerAccess")
 public class Neuron {
 
     private final int numConnections;

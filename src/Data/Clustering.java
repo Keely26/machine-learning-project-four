@@ -64,6 +64,10 @@ public class Clustering extends ArrayList<Cluster> {
         return interClusterDistance / nChoose2(this.size());
     }
 
+    public List<double[]> getCentroids() {
+        return this.parallelStream().map(Cluster::getCentroid).collect(Collectors.toList());
+    }
+
     private int nChoose2(int n) {
         switch (n) {
             case 1:

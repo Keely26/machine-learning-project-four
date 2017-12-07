@@ -15,7 +15,7 @@ public class Tester {
     private static DecimalFormat doubleFormatter = new DecimalFormat("#.####");
 
     public static void main(String[] args) {
-        clusterDataset(DatasetType.Iris);
+        clusterDataset(DatasetType.Glass);
     }
 
 

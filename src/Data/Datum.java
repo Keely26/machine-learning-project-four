@@ -6,7 +6,7 @@ public class Datum {
     private int cluster;
     private boolean core;
 
-    public Datum(double[] features) {
+    Datum(double[] features) {
         this.features = features;
     }
 

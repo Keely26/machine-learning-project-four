@@ -19,6 +19,7 @@ public class Tester {
     }
 
 
+
     private static void clusterDataset(DatasetType type) {
         Dataset dataset = DatasetBuilder.buildDataSet(type);
         List<IDataClusterer> clusterers = new ArrayList<>();

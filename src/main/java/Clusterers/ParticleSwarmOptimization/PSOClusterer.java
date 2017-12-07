@@ -1,6 +1,6 @@
 package Clusterers.ParticleSwarmOptimization;
 
-import Clusterers.*;
+import Clusterers.IDataClusterer;
 import Data.Clustering;
 import Data.Dataset;
 import Utilites.Utilities;

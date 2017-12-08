@@ -36,7 +36,7 @@ public class ACOClusterer implements IDataClusterer {
                     if (grid.hasFood(currentAnt.getLocation())) {
                         // Check if pick up
                         if (shouldPickUp(currentAnt, grid)) {
-                            grid.getFood(currentAnt.getLocation());
+                            currentAnt.addFood(grid.getFood(currentAnt.getLocation()));
                             currentAnt.setPickUpLocation();
                         }
                     }
@@ -45,6 +45,7 @@ public class ACOClusterer implements IDataClusterer {
                     if (!grid.hasFood(currentAnt.getLocation())) {
                         // Check if should drop
                         if (!currentAnt.getLocation().equals(currentAnt.getPickUpLocation()) && shouldDrop(currentAnt, grid)) {
+                            System.out.println(currentAnt.getLocation().toString());
                             grid.putFood(currentAnt.getLocation(), currentAnt.removeFood());
                         }
                     }
@@ -65,7 +66,7 @@ public class ACOClusterer implements IDataClusterer {
 
     private void move(Grid grid, Ant ant) {
         GridLocation antLocation = ant.getLocation();
-        List<Integer> moves = Arrays.asList(1, 2, 3, 4);
+        List<Integer> moves = new ArrayList<>(Arrays.asList(1, 2, 3, 4));
         Collections.shuffle(moves);
 
         while (!moves.isEmpty()) {

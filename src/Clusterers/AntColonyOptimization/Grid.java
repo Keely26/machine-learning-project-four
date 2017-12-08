@@ -51,7 +51,11 @@ public class Grid {
     }
 
     public boolean hasFood(GridLocation location) {
-        return this.grid[location.x][location.y] != null;
+        return location.x >= 0
+                && location.x < this.grid.length
+                && location.y >= 0
+                && location.y < this.grid[0].length
+                && this.grid[location.x][location.y] != null;
     }
 
     public Datum getFood(GridLocation location) {
@@ -82,7 +86,11 @@ public class Grid {
             }
         }
 
-        double avgDistance = computeAverageDistance(neighborhood, ant.getFood());
+        Datum payload = ant.getFood();
+        if (payload == null) {
+            return 0.0;
+        }
+        double avgDistance = computeAverageDistance(neighborhood, ant.getFood() == null ? this.grid[ant.getLocation().x][ant.getLocation().y].features : ant.getFood().features);
         if (avgDistance == 0.0) {
             return avgDistance;
         }
@@ -105,7 +113,11 @@ public class Grid {
 
 
     public boolean isUnoccupied(GridLocation location) {
-        return this.antOccupiedMap.get(location.hashCode()) == null;
+        return location.x >= 0
+                && location.y >= 0
+                && location.x < this.grid.length
+                && location.y < this.grid[0].length
+                && this.antOccupiedMap.get(location.hashCode()) == null;
     }
 
     public void updateLocation(GridLocation oldLocation, GridLocation newLocation) {
@@ -117,8 +129,7 @@ public class Grid {
         Clustering clustering = new Clustering();
 
 
-
-        // Todo: Make it so.
+        // Todo: Make it so.a
 
 
         return clustering;

@@ -25,8 +25,12 @@ public class Ant {
         return this.location;
     }
 
-    public double[] getFood() {
-        return this.food.features;
+    public Datum getFood() {
+        return this.food;
+    }
+
+    public void addFood(Datum food) {
+        this.food = food;
     }
 
     public Datum removeFood() {

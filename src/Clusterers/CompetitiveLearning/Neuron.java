@@ -1,24 +1,32 @@
 package Clusterers.CompetitiveLearning;
 
+import java.util.Arrays;
+
 @SuppressWarnings("WeakerAccess")
 public class Neuron {
 
-    private final int numConnections;
-    private double[] featureOrCenter;
+    private final int clusterIndex;
+    private double[] centroid;
 
-    public Neuron(int numConnections) {
-        this.numConnections = numConnections;
+    public Neuron(int clusterIndex, double[] centroid) {
+        this.clusterIndex = clusterIndex;
+        this.centroid = centroid;
     }
 
-    public int getNumConnections() {
-        return numConnections;
+    public double[] getCentroid() {
+        return centroid;
     }
 
-    public double[] getFeatureOrCenter() {
-        return featureOrCenter;
+    public void setCentroid(double[] centroid) {
+        this.centroid = centroid;
     }
 
-    public void setFeatureOrCenter(double[] newFeatureOrCenter) {
-        featureOrCenter = newFeatureOrCenter;
+    public int getClusterIndex() {
+        return clusterIndex;
+    }
+
+    @Override
+    public String toString() {
+        return "Index: " + clusterIndex + ", " + Arrays.toString(centroid);
     }
 }

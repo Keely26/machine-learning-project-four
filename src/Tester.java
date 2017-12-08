@@ -10,7 +10,7 @@ import java.util.List;
 
 public class Tester {
 
-    private static boolean loggingEnabled = false;
+    private static boolean loggingEnabled = true;
 
     private static DecimalFormat doubleFormatter = new DecimalFormat("#.######");
 
@@ -22,11 +22,11 @@ public class Tester {
     private static void clusterDataset(DatasetType type) {
         Dataset dataset = DatasetBuilder.buildDataSet(type);
         List<IDataClusterer> clusterers = new ArrayList<>();
-        clusterers.add(ClustererFactory.buildClusterer(ClustererType.kMeans));
-        clusterers.add(ClustererFactory.buildClusterer(ClustererType.DBSCAN));
-        //  clusterers.add(ClustererFactory.buildClusterer(ClustererType.CompetitiveNetwork));
-        clusterers.add(ClustererFactory.buildClusterer(ClustererType.PSOClusterer));
-        clusterers.add(ClustererFactory.buildClusterer(ClustererType.ACOClusterer));
+        //  clusterers.add(ClustererFactory.buildClusterer(ClustererType.kMeans));
+        // clusterers.add(ClustererFactory.buildClusterer(ClustererType.DBSCAN));
+        clusterers.add(ClustererFactory.buildClusterer(ClustererType.CompetitiveNetwork));
+        // clusterers.add(ClustererFactory.buildClusterer(ClustererType.PSOClusterer));
+        //  clusterers.add(ClustererFactory.buildClusterer(ClustererType.ACOClusterer));
 
         clusterers.forEach(clusterer -> {
             if (!loggingEnabled) {
@@ -43,6 +43,9 @@ public class Tester {
             }
             System.out.println(clusterer.toString());
             System.out.println("Number of Clusters: " + clustering.size());
+            for (int i = 0; i < clustering.size(); i++) {
+                System.out.println("Cluster " + i + ": " + clustering.get(i).size());
+            }
             System.out.println("Average Inter-Cluster Distance:\t" + doubleFormatter.format(clustering.evaluateInterClusterDistance()));
             System.out.println("Average Intra-Cluster Distance:\t" + doubleFormatter.format(clustering.evaluateIntraClusterDistance()));
             System.out.println("Cluster Quality:\t\t\t\t" + doubleFormatter.format(clustering.evaluateFitness()));

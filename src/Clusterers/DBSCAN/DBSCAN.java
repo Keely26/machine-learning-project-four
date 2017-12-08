@@ -10,32 +10,38 @@ public class DBSCAN implements IDataClusterer {
 
     private final double epsilon;
     private final int minPoints;
-    private int clusterIndex;
+    private int currentClusterLbl;
 
     public DBSCAN(int minPoints, double maxDistance) {
         this.minPoints = minPoints;
         this.epsilon = maxDistance;
-        this.clusterIndex = 1;
+        this.currentClusterLbl = 1;
     }
 
     @Override
     public Clustering cluster(Dataset dataset) {
         Clustering clustering = new Clustering();
-        this.clusterIndex = 0;
+        currentClusterLbl = 1;
 
         // Mark all core points
         findCorePoints(dataset);
 
-        dataset.forEach(dataPoint -> {
-            // If the data point is non-core or has already been clustered, continue
-            if (!dataPoint.isCore() || dataPoint.getCluster() != 0) {
-                return;
+        for (Datum datum : dataset) {
+            if (!datum.isCore()) {
+                continue;
             }
-            this.clusterIndex++;
-            dataPoint.setCluster(clusterIndex);
+            if (datum.getCluster() == 0) {
+                datum.setCluster(currentClusterLbl);
+                currentClusterLbl++;
+            }
 
-            expandCluster(dataPoint, dataset);
-        });
+            Dataset neighbors = getNeighbors(datum, dataset);
+            for (Datum neighbor : neighbors) {
+                if (neighbor.getCluster() == 0) {
+                    neighbor.setCluster(datum.getCluster());
+                }
+            }
+        }
 
         dataset.sortByCluster();
         Cluster cluster = new Cluster(dataset.get(0).getCluster());
@@ -59,20 +65,6 @@ public class DBSCAN implements IDataClusterer {
      */
     private void findCorePoints(Dataset dataset) {
         dataset.parallelStream().forEach(point -> point.setCore(getNeighbors(point, dataset).size() > this.minPoints));
-    }
-
-    private void expandCluster(Datum seedPoint, Dataset dataset) {
-        int clusterId = seedPoint.getCluster();
-        Dataset neighbors = getNeighbors(seedPoint, dataset);
-        neighbors.forEach(neighbor -> {
-            if (neighbor.getCluster() != 0) {
-                return;
-            }
-            neighbor.setCluster(clusterId);
-            if (neighbor.isCore()) {
-                expandCluster(neighbor, dataset);
-            }
-        });
     }
 
     /**

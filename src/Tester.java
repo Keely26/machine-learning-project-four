@@ -12,10 +12,11 @@ public class Tester {
 
     private static boolean loggingEnabled = true;
 
-    private static DecimalFormat doubleFormatter = new DecimalFormat("#.######");
+    private static DecimalFormat doubleFormatter = new DecimalFormat("#.########");
 
     public static void main(String[] args) {
 
+        //findGoodParams(DatasetBuilder.buildDataSet(DatasetType.Iris));
         clusterDataset(DatasetType.Iris);
     }
 
@@ -23,9 +24,9 @@ public class Tester {
         Dataset dataset = DatasetBuilder.buildDataSet(type);
         List<IDataClusterer> clusterers = new ArrayList<>();
         //  clusterers.add(ClustererFactory.buildClusterer(ClustererType.kMeans));
-        // clusterers.add(ClustererFactory.buildClusterer(ClustererType.DBSCAN));
+         clusterers.add(ClustererFactory.buildClusterer(ClustererType.DBSCAN));
      //   clusterers.add(ClustererFactory.buildClusterer(ClustererType.CompetitiveNetwork));
-         clusterers.add(ClustererFactory.buildClusterer(ClustererType.PSOClusterer));
+      //   clusterers.add(ClustererFactory.buildClusterer(ClustererType.PSOClusterer));
         //  clusterers.add(ClustererFactory.buildClusterer(ClustererType.ACOClusterer));
 
         List<Double> quality = new ArrayList<>();
@@ -88,13 +89,13 @@ public class Tester {
         int minPoints = 0;
         double epsilon = 0;
         double bestQuality = 0.0;
-        for (int i = 0; i <= 20; i++) {
-            for (double j = 0; j <= 20; j += 0.05) {
+        for (int i = 5; i <= 20; i++) {
+            for (double j = 0; j <= 20; j += 0.1) {
                 System.out.println("MinPts: " + i + ", Epsilon: " + j);
                 IDataClusterer DBSCAN = new DBSCAN(i, j);
                 Clustering clustering = DBSCAN.cluster(dataset);
                 printClusterStats(clustering, ClustererType.DBSCAN);
-                if (clustering.evaluateFitness() < bestQuality) {
+                if (clustering.evaluateFitness() > bestQuality) {
                     bestQuality = clustering.evaluateFitness();
                     minPoints = i;
                     epsilon = j;

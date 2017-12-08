@@ -55,38 +55,19 @@ public class Clustering extends ArrayList<Cluster> {
         double interClusterDistance = 0.0;
         // Filter out empty clusters?
         List<double[]> centroids = this.parallelStream().map(Cluster::getCentroid).collect(Collectors.toList());
+        int count = 0;
         for (int i = 0; i < centroids.size(); i++) {
             for (int j = i; j < centroids.size(); j++) {
                 interClusterDistance += Utilities.computeDistance(centroids.get(i), centroids.get(j));
+                count++;
             }
         }
 
-        return interClusterDistance / nChoose2(this.size());
+        return interClusterDistance / count;
     }
 
     public List<double[]> getCentroids() {
         return this.parallelStream().map(Cluster::getCentroid).collect(Collectors.toList());
-    }
-
-    private int nChoose2(int n) {
-        switch (n) {
-            case 1:
-                return 1;
-            case 2:
-                return 2;
-            case 3:
-                return 3;
-            default:
-                int nFactorial = 1;
-                for (int i = n; i > 0; i--) {
-                    nFactorial *= i;
-                }
-                int nLessTwoFactorial = 1;
-                for (int i = n - 2; i > 0; i--) {
-                    nFactorial *= i;
-                }
-                return nFactorial / (2 * nLessTwoFactorial);
-        }
     }
 
     private int nonEmptyClusterCount() {

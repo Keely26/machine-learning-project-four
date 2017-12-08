@@ -15,7 +15,7 @@ public class ClustererFactory {
     private static final int numAnts = 100;
     private static final double k1 = 2;
     private static final double k2 = 2;
-    private static final double radius = 20.0;
+    private static final double radius = 50.0;
 
     /* PSO Parameters */
     private static final int numParticles = 15;
@@ -25,11 +25,11 @@ public class ClustererFactory {
     private static final double socialWeight = 1.0;
 
     /* Competitive Network Parameters */
-    private static final double learningRate = 0.2;
+    private static final double learningRate = 0.3;
 
     /* DBSCAN Parameters */
-    private static final int minPoints = 5;
-    private static final double epsilon = 0.6;
+    private static final int minPoints = 8;
+    private static final double epsilon = 1;
 
     public static IDataClusterer buildClusterer(ClustererType type) {
         switch (type) {

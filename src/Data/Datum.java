@@ -1,5 +1,7 @@
 package Data;
 
+import java.util.Arrays;
+
 public class Datum {
 
     public final double[] features;
@@ -18,16 +20,16 @@ public class Datum {
         this.cluster = cluster;
     }
 
-    @Override
-    public String toString() {
-        return Integer.toString(cluster);
-    }
-
     public boolean isCore() {
         return this.core;
     }
 
     public void setCore(boolean core) {
         this.core = core;
+    }
+
+    @Override
+    public String toString() {
+        return Integer.toString(cluster).concat(", ").concat(Arrays.toString(features));
     }
 }

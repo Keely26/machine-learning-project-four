@@ -2,6 +2,7 @@ package Clusterers.DBSCAN;
 
 import Clusterers.IDataClusterer;
 import Data.*;
+import Utilites.Utilities;
 
 import java.util.stream.Collectors;
 
@@ -19,7 +20,6 @@ public class DBSCAN implements IDataClusterer {
 
     @Override
     public Clustering cluster(Dataset dataset) {
-        dataset.computeDistances();
         Clustering clustering = new Clustering();
         this.clusterIndex = 0;
 
@@ -80,7 +80,7 @@ public class DBSCAN implements IDataClusterer {
      */
     private Dataset getNeighbors(Datum sample, Dataset dataset) {
         return dataset.parallelStream()
-                .filter(neighbor -> !neighbor.equals(sample) && dataset.getDistance(sample, neighbor) < this.epsilon)
+                .filter(neighbor -> !neighbor.equals(sample) && Utilities.computeDistance(sample.features, neighbor.features) < this.epsilon)
                 .collect(Collectors.toCollection(Dataset::new));
     }
 

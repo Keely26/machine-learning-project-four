@@ -3,18 +3,18 @@ package Clusterers.ParticleSwarmOptimization;
 import Data.Dataset;
 
 import java.util.ArrayList;
+import java.util.List;
 
-@SuppressWarnings("WeakerAccess")
 public class Swarm extends ArrayList<Particle> {
 
-    private Particle globalBest;
+    private List<double[]> globalBest;
     private double globalBestQuality = Double.MIN_VALUE;
 
     public Swarm(int size) {
         super(size);
     }
 
-    public Particle getGlobalBest() {
+    public List<double[]> getGlobalBest() {
         return this.globalBest;
     }
 
@@ -22,7 +22,7 @@ public class Swarm extends ArrayList<Particle> {
         this.forEach(particle -> {
             double quality = particle.evaluate(dataset);
             if (quality > this.globalBestQuality) {
-                this.globalBest = particle;
+                this.globalBest = particle.getPosition();
                 this.globalBestQuality = quality;
             }
         });

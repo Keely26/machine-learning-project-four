@@ -1,6 +1,7 @@
 package Clusterers.ParticleSwarmOptimization;
 
-import Clusterers.*;
+import Clusterers.IDataClusterer;
+import Clusterers.KMeans.KMeans;
 import Data.Clustering;
 import Data.Dataset;
 import Utilites.Utilities;
@@ -39,14 +40,14 @@ public class PSOClusterer implements IDataClusterer {
             // For each particle, update position, evaluate, update velocity, set personal and global bests
             particleSwarm.parallelStream().forEach(particle -> {
                 particle.updatePosition();
-                particle.updateVelocity(particleSwarm.getGlobalBest().getPosition());
+                particle.updateVelocity(particleSwarm.getGlobalBest());
             });
 
             iteration++;
         } while (iteration < maxIterations && notConverged());
 
         // Retrieve best clustering
-        return particleSwarm.getGlobalBest().getBestClustering(dataset);
+        return Utilities.assignPointsToClusters(dataset, particleSwarm.getGlobalBest());
     }
 
     private boolean notConverged() {
@@ -63,12 +64,14 @@ public class PSOClusterer implements IDataClusterer {
             List<double[]> initialCenterPositions = new ArrayList<>();
             List<double[]> initialCenterVelocities = new ArrayList<>();
 
+            // Use k Means to pick starting centers
+            KMeans kMeans = new KMeans(this.numClusters);
+            Clustering clustering = kMeans.cluster(dataset);
             for (int j = 0; j < this.numClusters; j++) {
-                double[] startingPosition = new double[dataset.getFeatureSize()];
+                double[] startingPosition = clustering.get(j).getCentroid();
                 double[] startingVelocity = new double[dataset.getFeatureSize()];
 
                 for (int k = 0; k < startingPosition.length; k++) {
-                    startingPosition[k] = Utilities.randomDouble(minValues[k], maxValues[k]);
                     startingVelocity[k] = Utilities.randomDouble(0, Math.sqrt(maxValues[k]));
                 }
                 initialCenterPositions.add(startingPosition);
@@ -123,7 +126,7 @@ public class PSOClusterer implements IDataClusterer {
     }
 
     private void logIteration(int iteration, Dataset dataset) {
-        Clustering currentBest = this.particleSwarm.getGlobalBest().getBestClustering(dataset);
+        Clustering currentBest = Utilities.assignPointsToClusters(dataset, this.particleSwarm.getGlobalBest());
         System.out.print("Iteration: " + iteration);
         System.out.println(", best clustering:");
         System.out.println(currentBest.toString());

@@ -5,11 +5,6 @@ public class Cluster extends Dataset {
     private int clusterId;
     private double[] clusterCenter;
 
-    public Cluster(Dataset elements, int clusterId) {
-        super(elements);
-        this.clusterId = clusterId;
-    }
-
     public Cluster(int clusterId) {
         this.clusterId = clusterId;
     }
@@ -34,7 +29,7 @@ public class Cluster extends Dataset {
         this.clusterCenter = clusterCenter;
     }
 
-    double[] getCentroid() {
+    public double[] getCentroid() {
         if (this.size() == 0) {
             return this.clusterCenter;
         }

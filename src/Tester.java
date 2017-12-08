@@ -15,19 +15,20 @@ public class Tester {
     private static DecimalFormat doubleFormatter = new DecimalFormat("#.######");
 
     public static void main(String[] args) {
+
         clusterDataset(DatasetType.Iris);
     }
 
-
-    private static void clusterDataset(DatasetType type) {
+    private static List<Double> clusterDataset(DatasetType type) {
         Dataset dataset = DatasetBuilder.buildDataSet(type);
         List<IDataClusterer> clusterers = new ArrayList<>();
         //  clusterers.add(ClustererFactory.buildClusterer(ClustererType.kMeans));
         // clusterers.add(ClustererFactory.buildClusterer(ClustererType.DBSCAN));
-        clusterers.add(ClustererFactory.buildClusterer(ClustererType.CompetitiveNetwork));
-        // clusterers.add(ClustererFactory.buildClusterer(ClustererType.PSOClusterer));
+     //   clusterers.add(ClustererFactory.buildClusterer(ClustererType.CompetitiveNetwork));
+         clusterers.add(ClustererFactory.buildClusterer(ClustererType.PSOClusterer));
         //  clusterers.add(ClustererFactory.buildClusterer(ClustererType.ACOClusterer));
 
+        List<Double> quality = new ArrayList<>();
         clusterers.forEach(clusterer -> {
             if (!loggingEnabled) {
                 System.setOut(new PrintStream(new OutputStream() {
@@ -46,13 +47,24 @@ public class Tester {
             for (int i = 0; i < clustering.size(); i++) {
                 System.out.println("Cluster " + i + ": " + clustering.get(i).size());
             }
+            quality.add(clustering.evaluateFitness());
             System.out.println("Average Inter-Cluster Distance:\t" + doubleFormatter.format(clustering.evaluateInterClusterDistance()));
             System.out.println("Average Intra-Cluster Distance:\t" + doubleFormatter.format(clustering.evaluateIntraClusterDistance()));
             System.out.println("Cluster Quality:\t\t\t\t" + doubleFormatter.format(clustering.evaluateFitness()));
             System.out.println();
             resetDataset(dataset);
         });
+        return quality;
     }
+
+
+    private void tenFoldValidation() {
+
+        for (int i = 0; i < 10; i++) {
+            clusterDataset(DatasetType.Iris);
+        }
+    }
+
 
     private static void printClusterStats(Clustering clusters, ClustererType type) {
         if (clusters.size() == 0) {

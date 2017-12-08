@@ -136,7 +136,7 @@ public class Grid {
             for (int j = 0; j < this.grid[0].length; j++) {
                 Datum loc = this.grid[i][j];
                 if (loc != null) {
-                    twoDDataset.add(new Datum(new double[]{i,j}));
+                    twoDDataset.add(new Datum(new double[]{i, j}));
                 }
             }
         }

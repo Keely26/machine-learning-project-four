@@ -6,7 +6,6 @@ import Utilites.Utilities;
 
 import java.util.List;
 
-@SuppressWarnings("WeakerAccess")
 public class Particle {
 
     private final double inertia;
@@ -59,12 +58,7 @@ public class Particle {
         }
     }
 
-    public Clustering getBestClustering(Dataset dataset) {
-        return Utilities.assignPointsToClusters(dataset, this.personalBest);
-    }
-
     public List<double[]> getPosition() {
         return position;
     }
-
 }

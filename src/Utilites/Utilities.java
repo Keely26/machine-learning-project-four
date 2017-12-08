@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Random;
 import java.util.stream.Collectors;
 
-@SuppressWarnings("WeakerAccess")
 public class Utilities {
 
     private static final Random random = new Random(System.nanoTime());

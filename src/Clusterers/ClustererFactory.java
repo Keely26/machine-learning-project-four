@@ -9,7 +9,7 @@ import Clusterers.ParticleSwarmOptimization.PSOClusterer;
 public class ClustererFactory {
 
     /* Universal Parameters */
-    private static final int numClusters = 5;
+    private static final int numClusters = 3;
 
     /* ACO Parameters */
     private static final int numAnts = 100;
@@ -19,14 +19,13 @@ public class ClustererFactory {
     private static final double gamma = 2.0;
 
     /* PSO Parameters */
-    private static final int numParticles = 20;
-    private static final int maxIterations = 1000;
-    private static final double inertia = 0.72;
-    private static final double cognitiveWeight = 1.49;
-    private static final double socialWeight = 1.49;
+    private static final int numParticles = 15;
+    private static final int maxIterations = 500;
+    private static final double inertia = 0.3;
+    private static final double cognitiveWeight = 1.0;
+    private static final double socialWeight = 1.0;
 
     /* Competitive Network Parameters */
-    private static final int numInputNeurons = 10;
     private static final double learningRate = 0.2;
 
     /* DBSCAN Parameters */

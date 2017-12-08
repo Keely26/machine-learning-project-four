@@ -2,7 +2,6 @@ package Clusterers.CompetitiveLearning;
 
 import java.util.Arrays;
 
-@SuppressWarnings("WeakerAccess")
 public class Neuron {
 
     private final int clusterIndex;

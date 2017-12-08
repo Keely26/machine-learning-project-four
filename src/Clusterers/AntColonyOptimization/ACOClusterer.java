@@ -1,20 +1,16 @@
 package Clusterers.AntColonyOptimization;
 
 import Clusterers.IDataClusterer;
-import Data.*;
+import Data.Clustering;
+import Data.Dataset;
+import Utilites.Utilities;
 
 import java.util.*;
-
 
 public class ACOClusterer implements IDataClusterer {
 
     private final int numAnts;
     private final double k1, k2, radius, gamma;
-
-    private List<Ant> ants;
-    double density;
-    HashMap<Integer, Datum> distances = new HashMap<>();
-
 
     public ACOClusterer(int numAnts, double k1, double k2, double radius, double gamma) {
         this.numAnts = numAnts;
@@ -26,95 +22,123 @@ public class ACOClusterer implements IDataClusterer {
 
     @Override
     public Clustering cluster(Dataset dataset) {
-        //compute distance of data points before placed on grid
-        dataset.computeDistances();
+        // Initialize
+        List<Ant> ants = initializeAnts();
+        Grid grid = new Grid(dataset, ants);
 
-        // Initialize grid
-        Datum[][] grid = Grid.createGrid(dataset); //creates empty 2D grid of Datum
-
-        //Initialize ants with random positions
-        ants = Ant.createAnts(dataset, ants);
-
-        //for each ant
-        for (Ant k : ants) {
-            Ant.move(k, k.x, k.y, grid);
-            Datum dataPoint = Grid.getDataPoint(grid, k.x, k.y);
-            //if ant is not carrying and site has data point
-            if (k.carrying == null && dataPoint != null) {
-                density = similarityFunction(radius, dataset, k, grid);
-                double Pp = probPickUp(k1, density);
-                //TODO check if U(1,0) <= prob pick up is same as below
-                if (Pp <= gamma) {
-                    pickUp(k, dataPoint, grid);
+        int iteration = 0;
+        do {
+            // For each ant
+            for (Ant currentAnt : ants) {
+                // If not carrying
+                if (!currentAnt.isCarrying()) {
+                    // If site has food
+                    if (grid.hasFood(currentAnt.getLocation())) {
+                        // Check if pick up
+                        if (shouldPickUp(currentAnt, grid)) {
+                            grid.getFood(currentAnt.getLocation());
+                            currentAnt.setPickUpLocation();
+                        }
+                    }
+                } else {
+                    // Ant is carrying
+                    if (!grid.hasFood(currentAnt.getLocation())) {
+                        // Check if should drop
+                        if (!currentAnt.getLocation().equals(currentAnt.getPickUpLocation()) && shouldDrop(currentAnt, grid)) {
+                            grid.putFood(currentAnt.getLocation(), currentAnt.removeFood());
+                        }
+                    }
                 }
+                // Move
+                move(grid, currentAnt);
             }
-            //else if ant is carrying item and site is empty
-            if (k.carrying != null && dataPoint == null) {
-                density = similarityFunction(radius, dataset, k, grid);
-                double Pd = probDrop(k2, density);
-                //if U(1,0) <= prob dropping
-                //TODO check if U(1,0) <= prob pick up is same as below
-                if (Pd <= gamma) {
-                    drop(k, dataPoint, grid);
-                }
+
+            iteration++;
+        } while (shouldContinue(iteration));
+
+        return grid.buildClustering();
+    }
+
+    private boolean shouldContinue(int iteration) {
+        return iteration < 1000;
+    }
+
+    private void move(Grid grid, Ant ant) {
+        GridLocation antLocation = ant.getLocation();
+        List<Integer> moves = Arrays.asList(1, 2, 3, 4);
+        Collections.shuffle(moves);
+
+        while (!moves.isEmpty()) {
+            int move = moves.remove(0);
+            GridLocation newLocation = new GridLocation(antLocation.x, antLocation.y);
+            switch (move) {
+                case 1: // Up
+                    newLocation.y++;
+                    if (grid.isUnoccupied(newLocation)) {
+                        ant.setLocation(newLocation);
+                        grid.updateLocation(antLocation, newLocation);
+                        return;
+                    }
+                    break;
+                case 2: // Down
+                    newLocation.y--;
+                    if (grid.isUnoccupied(newLocation)) {
+                        ant.setLocation(newLocation);
+                        grid.updateLocation(antLocation, newLocation);
+                        return;
+                    }
+                    break;
+                case 3: // Right
+                    newLocation.x++;
+                    if (grid.isUnoccupied(newLocation)) {
+                        ant.setLocation(newLocation);
+                        grid.updateLocation(antLocation, newLocation);
+                        return;
+                    }
+                    break;
+                case 4: // Left
+                    newLocation.x--;
+                    if (grid.isUnoccupied(newLocation)) {
+                        ant.setLocation(newLocation);
+                        grid.updateLocation(antLocation, newLocation);
+                        return;
+                    }
+                    break;
+                default:
+                    throw new UnsupportedOperationException("Invalid ant movement, " + move);
             }
-            //move to randomly selected neighboring site not occupied by ant
-            Ant.move(k, k.x, k.y, grid);
         }
-        return null;
+    }
+
+    private boolean shouldPickUp(Ant ant, Grid grid) {
+        double density = grid.getDensity(ant, this.radius);
+        return Utilities.randomDouble(1) < probPickUp(density);
+    }
+
+    private boolean shouldDrop(Ant ant, Grid grid) {
+        double density = grid.getDensity(ant, this.radius);
+        return Utilities.randomDouble(1) < probDrop(density);
+    }
+
+    private double probPickUp(double density) {
+        return Math.pow((k1 / (k1 + density)), 2);
+    }
+
+    private double probDrop(double density) {
+        return Math.pow((density / (k2 + density)), 2);
+    }
+
+    private List<Ant> initializeAnts() {
+        List<Ant> ants = new ArrayList<>(this.numAnts);
+        for (int i = 0; i < this.numAnts; i++) {
+            ants.add(new Ant());
+        }
+        return ants;
     }
 
     @Override
     public String toString() {
         return "Ant Colony Optimization";
     }
-
-
-    private double similarityFunction(double radius, Dataset dataset, Ant ant, Datum[][] grid) {
-        Datum[] neighborhood = ant.checkNeighborhood(radius);
-        double similarity = 0.0;
-        for (int i = 0; i < neighborhood.length; i++) {
-            int[] datumLocation = Grid.gridLocation(dataset, grid, neighborhood[i]);
-            //int[] x2Coordinates = Grid.getGridLocation(neighborhood[i], ant);
-            //double similarity = ((1 / radius) * (getDistance(getDataPointLocation(ant.x, ant.y), neighborhood[i])/dataset.getDistance()));
-            similarity = +((1 / radius) * (getDistance(ant.x, ant.y, datumLocation[0], datumLocation[1]) / dataset.getDistance(getDataPointLocation(ant.x, ant.y), getDataPointLocation(datumLocation[0], datumLocation[1]))));
-
-        }
-        return similarity;
-    }
-
-    private double probPickUp(double k1, double density) {
-        double probability = Math.pow((k1 / (k1 + density)), 2);
-        return probability;
-    }
-
-    private double probDrop(double k2, double density) {
-        double probability = Math.pow((density / (k2 + density)), 2);
-        return probability;
-    }
-
-
-    private void pickUp(Ant ant, Datum dataPoint, Datum[][] grid) {
-        ant.carrying = dataPoint;
-        //Grid.getDataPoint(grid, ant.x, ant.y) = null;
-    }
-
-    private void drop(Ant ant, Datum corpse, Datum[][] grid) {
-        ant.carrying = null;
-        //Grid.getDataPoint(grid, ant.x, ant.y) = null;
-    }
-
-    private double getDistance(int x1, int y1, int x2, int y2) {
-        double distance = Math.sqrt((Math.pow((x2 - x1), 2)) + (Math.pow((y2 - y1), 2)));
-        return distance;
-    }
-
-
-    private Datum getDataPointLocation(int x, int y) {
-        int[] antPosition = new int[]{x, y};
-        Datum dataPoint = this.distances.getOrDefault(Arrays.hashCode(antPosition), null);
-        return dataPoint;
-    }
-
 }
 

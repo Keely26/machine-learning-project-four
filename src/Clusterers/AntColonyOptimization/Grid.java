@@ -1,84 +1,127 @@
 package Clusterers.AntColonyOptimization;
 
-import Data.Dataset;
-import Data.Datum;
+import Data.*;
+import Utilites.Utilities;
 
-import java.util.Random;
+import java.util.*;
 
 public class Grid {
-    Ant ant;
-    Datum[][] grid;
-    int x;
-    int y;
-    boolean isVacant = false;
-    boolean antOccupies = false;
-    boolean dataOccupies = false;
 
-    public Grid(Datum[][] grid, int x, int y) {
-        this.ant = ant;
-        this.grid = grid;
+    private Datum[][] grid;
+    private HashMap<Integer, Boolean> antOccupiedMap;
+
+    public Grid(Dataset dataset, List<Ant> ants) {
+        initializeGrid(dataset, ants);
     }
 
-    public static Datum[][] createGrid(Dataset dataset) {
-        //TODO
-        Datum[][] grid = new Datum[dataset.size()][dataset.size()]; //initializes 2D array of datum
-        grid = fillGrid(grid, dataset); //fills grid randomly with data points
-        return grid;
-    }
+    public void initializeGrid(Dataset dataset, List<Ant> ants) {
+        this.grid = new Datum[dataset.size()][dataset.size()];
+        this.antOccupiedMap = new HashMap<>();
 
-    public static int[] gridLocation(Dataset dataset, Datum[][] grid, Datum datum) {
-        int[] gridLocation = new int[2];
+        // Place data points
+        List<GridLocation> locations = new ArrayList<>();
         for (int i = 0; i < dataset.size(); i++) {
             for (int j = 0; j < dataset.size(); j++) {
-                if (datum == grid[i][j]) {
-                    gridLocation[0] = i;
-                    gridLocation[1] = j;
+                locations.add(new GridLocation(i, j));
+            }
+        }
+
+        Collections.shuffle(locations);
+
+        for (Datum point : dataset) {
+            GridLocation randomLocation = locations.remove(0);
+            this.grid[randomLocation.x][randomLocation.y] = point;
+        }
+
+        // Place ants
+        locations = new ArrayList<>();
+        for (int i = 0; i < dataset.size(); i++) {
+            for (int j = 0; j < dataset.size(); j++) {
+                locations.add(new GridLocation(i, j));
+            }
+        }
+
+        Collections.shuffle(locations);
+
+        for (Ant ant : ants) {
+            GridLocation randomLocation = locations.remove(0);
+            ant.setLocation(randomLocation);
+            this.antOccupiedMap.put(ant.hashCode(), true);
+        }
+    }
+
+    public boolean hasFood(GridLocation location) {
+        return this.grid[location.x][location.y] != null;
+    }
+
+    public Datum getFood(GridLocation location) {
+        Datum food = this.grid[location.x][location.y];
+        this.grid[location.x][location.y] = null;
+        return food;
+    }
+
+    public void putFood(GridLocation location, Datum food) {
+        this.grid[location.x][location.y] = food;
+    }
+
+    public double getDensity(Ant ant, double radius) {
+        Dataset neighborhood = new Dataset();
+        double[] antLocation = new double[]{ant.getLocation().x, ant.getLocation().y};
+
+        for (int i = 0; i < this.grid.length; i++) {
+            for (int j = 0; j < this.grid[0].length; j++) {
+                // Get distance to location
+                Datum gridIJ = this.grid[i][j];
+                if (gridIJ != null) {
+                    double[] space = new double[]{i, j};
+                    double distance = Utilities.computeDistance(antLocation, space);
+                    if (distance < radius) {
+                        neighborhood.add(gridIJ);
+                    }
                 }
             }
         }
-        return gridLocation;
+
+        double avgDistance = computeAverageDistance(neighborhood, ant.getFood());
+        if (avgDistance == 0.0) {
+            return avgDistance;
+        }
+
+        double density = 0.0;
+        for (Datum neighbor : neighborhood) {
+            density += (1 / radius) * (Utilities.computeDistance(antLocation, neighbor.features) / avgDistance);
+        }
+
+        return density;
+    }
+
+    private double computeAverageDistance(Dataset neighbors, double[] point) {
+        double avg = 0.0;
+        for (Datum neighbor : neighbors) {
+            avg += Utilities.computeDistance(neighbor.features, point);
+        }
+        return avg / neighbors.size();
     }
 
 
-    public static Datum[][] fillGrid(Datum[][] grid, Dataset dataset) {
-        Random random = new Random();
-        Datum[] dataPoints = dataset.toArray(new Datum[dataset.size()]); //array of data points
-        Datum[][] datum = {dataPoints}; // 2D array of datum
-        for (int i = 0; i < dataset.size(); i++) {
-            for (int j = 0; j < dataset.size(); j++) {
-                int x = random.nextInt(dataset.size());
-                int y = random.nextInt(dataset.size());
-                grid[x][y] = datum[i][j];
-            }
-        }
-        return grid;
+    public boolean isUnoccupied(GridLocation location) {
+        return this.antOccupiedMap.get(location.hashCode()) == null;
     }
 
-
-    public static Datum getDataPoint(Datum[][] grid, int x, int y) {
-        //TODO given a data point return its x and y coordinates on grid
-        Datum dataPoint;
-        dataPoint = grid[x][y];
-        return dataPoint;
+    public void updateLocation(GridLocation oldLocation, GridLocation newLocation) {
+        this.antOccupiedMap.remove(oldLocation.hashCode());
+        this.antOccupiedMap.put(newLocation.hashCode(), true);
     }
 
+    public Clustering buildClustering() {
+        Clustering clustering = new Clustering();
 
-/*
 
-    public void updateLocationStatus(int x, int y, Dataset dataset, List<Ant> ants, int[][] searchSpace) {
 
-        for (Ant ant: ants) {
-            if(ant.curPosition == ant.curPosition) {
-                antOccupies = true;
-            }
-        }
-        for (Datum dataPoint: dataset) {
-            if(ant.curPosition == searchSpace[x][y]) {
-                dataOccupies = true;
-                }
-            }
-        }
-        */
+        // Todo: Make it so.
 
+
+        return clustering;
+    }
 }
 

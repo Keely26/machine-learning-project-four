@@ -20,12 +20,14 @@ public class DatasetBuilder {
         File file = new File(PATH.concat(type.toString()).concat(CSV));
         List<String> lines = Objects.requireNonNull(getFileStream(file)).collect(Collectors.toList());
 
-        return lines.stream()
+        Dataset dataset = lines.stream()
                 .map(line -> new Datum(Arrays.stream(COMMA_DELIMITER
                         .split(line))
                         .mapToDouble(Double::parseDouble)
                         .toArray()))
                 .collect(Collectors.toCollection(Dataset::new));
+        dataset.setName(type.toString());
+        return dataset;
     }
 
     private static Stream<String> getFileStream(File file) {

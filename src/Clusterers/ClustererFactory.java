@@ -9,10 +9,10 @@ import Clusterers.ParticleSwarmOptimization.PSOClusterer;
 public class ClustererFactory {
 
     /* Universal Parameters */
-    private static final int numClusters = 4;
+    private static final int numClusters = 7;
 
     /* ACO Parameters */
-    private static final int numAnts = 50;
+    private static final int numAnts = 100;
     private static final double k1 = 2;
     private static final double k2 = 2;
     private static final double radius = 10.0;
@@ -36,7 +36,7 @@ public class ClustererFactory {
     public static IDataClusterer buildClusterer(ClustererType type) {
         switch (type) {
             case ACOClusterer:
-                return new ACOClusterer(numAnts, k1, k2, radius, gamma);
+                return new ACOClusterer(numAnts, k1, k2, radius, numClusters);
             case PSOClusterer:
                 return new PSOClusterer(numClusters, numParticles, maxIterations, inertia, cognitiveWeight, socialWeight);
             case CompetitiveNetwork:

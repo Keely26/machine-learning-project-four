@@ -1,5 +1,6 @@
 package Clusterers.AntColonyOptimization;
 
+import Clusterers.KMeans.KMeans;
 import Data.*;
 import Utilites.Utilities;
 
@@ -125,12 +126,33 @@ public class Grid {
         this.antOccupiedMap.put(newLocation.hashCode(), true);
     }
 
-    public Clustering buildClustering() {
+    public Clustering buildClustering(int numClusters) {
         Clustering clustering = new Clustering();
 
+        // Use kMeans to cluster the points on the 2D grid
+        KMeans kMeans = new KMeans(numClusters);
+        Dataset twoDDataset = new Dataset();
+        for (int i = 0; i < this.grid.length; i++) {
+            for (int j = 0; j < this.grid[0].length; j++) {
+                Datum loc = this.grid[i][j];
+                if (loc != null) {
+                    twoDDataset.add(new Datum(new double[]{i,j}));
+                }
+            }
+        }
+        Clustering twoDClustering = kMeans.cluster(twoDDataset);
 
-        // Todo: Make it so.a
-
+        // Convert the 2D clustering back into the original problem
+        for (int i = 0; i < twoDClustering.size(); i++) {
+            Cluster twoDCluster = twoDClustering.get(i);
+            Cluster solutionCluster = new Cluster(i);
+            for (Datum gridLocation : twoDCluster) {
+                int x = (int) gridLocation.features[0];
+                int y = (int) gridLocation.features[1];
+                solutionCluster.add(this.grid[x][y]);
+            }
+            clustering.add(solutionCluster);
+        }
 
         return clustering;
     }

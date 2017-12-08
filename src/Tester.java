@@ -10,9 +10,9 @@ import java.util.List;
 
 public class Tester {
 
-    private static boolean loggingEnabled = true;
+    private static boolean loggingEnabled = false;
 
-    private static DecimalFormat doubleFormatter = new DecimalFormat("#.####");
+    private static DecimalFormat doubleFormatter = new DecimalFormat("#.######");
 
     public static void main(String[] args) {
         clusterDataset(DatasetType.Iris);
@@ -22,11 +22,11 @@ public class Tester {
     private static void clusterDataset(DatasetType type) {
         Dataset dataset = DatasetBuilder.buildDataSet(type);
         List<IDataClusterer> clusterers = new ArrayList<>();
-        clusterers.add(ClustererFactory.buildClusterer(ClustererType.ACOClusterer));
-        //  clusterers.add(ClustererFactory.buildClusterer(ClustererType.DBSCAN));
+        clusterers.add(ClustererFactory.buildClusterer(ClustererType.kMeans));
+        clusterers.add(ClustererFactory.buildClusterer(ClustererType.DBSCAN));
         //  clusterers.add(ClustererFactory.buildClusterer(ClustererType.CompetitiveNetwork));
-        //  clusterers.add(ClustererFactory.buildClusterer(ClustererType.PSOClusterer));
-        //  clusterers.add(ClustererFactory.buildClusterer(ClustererType.ACOClusterer));
+        clusterers.add(ClustererFactory.buildClusterer(ClustererType.PSOClusterer));
+        clusterers.add(ClustererFactory.buildClusterer(ClustererType.ACOClusterer));
 
         clusterers.forEach(clusterer -> {
             if (!loggingEnabled) {

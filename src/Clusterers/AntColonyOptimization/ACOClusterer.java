@@ -9,15 +9,15 @@ import java.util.*;
 
 public class ACOClusterer implements IDataClusterer {
 
-    private final int numAnts;
-    private final double k1, k2, radius, gamma;
+    private final int numAnts, numClusters;
+    private final double k1, k2, radius;
 
-    public ACOClusterer(int numAnts, double k1, double k2, double radius, double gamma) {
+    public ACOClusterer(int numAnts, double k1, double k2, double radius, int numClusters) {
         this.numAnts = numAnts;
         this.k1 = k1;
         this.k2 = k2;
         this.radius = radius;
-        this.gamma = gamma;
+        this.numClusters = numClusters;
     }
 
     @Override
@@ -45,7 +45,6 @@ public class ACOClusterer implements IDataClusterer {
                     if (!grid.hasFood(currentAnt.getLocation())) {
                         // Check if should drop
                         if (!currentAnt.getLocation().equals(currentAnt.getPickUpLocation()) && shouldDrop(currentAnt, grid)) {
-                            System.out.println(currentAnt.getLocation().toString());
                             grid.putFood(currentAnt.getLocation(), currentAnt.removeFood());
                         }
                     }
@@ -57,11 +56,11 @@ public class ACOClusterer implements IDataClusterer {
             iteration++;
         } while (shouldContinue(iteration));
 
-        return grid.buildClustering();
+        return grid.buildClustering(numClusters);
     }
 
     private boolean shouldContinue(int iteration) {
-        return iteration < 1000;
+        return iteration < 10000;
     }
 
     private void move(Grid grid, Ant ant) {
@@ -113,20 +112,12 @@ public class ACOClusterer implements IDataClusterer {
 
     private boolean shouldPickUp(Ant ant, Grid grid) {
         double density = grid.getDensity(ant, this.radius);
-        return Utilities.randomDouble(1) < probPickUp(density);
+        return Utilities.randomDouble(1) < Math.pow((k1 / (k1 + density)), 2);
     }
 
     private boolean shouldDrop(Ant ant, Grid grid) {
         double density = grid.getDensity(ant, this.radius);
-        return Utilities.randomDouble(1) < probDrop(density);
-    }
-
-    private double probPickUp(double density) {
-        return Math.pow((k1 / (k1 + density)), 2);
-    }
-
-    private double probDrop(double density) {
-        return Math.pow((density / (k2 + density)), 2);
+        return Utilities.randomDouble(1) < Math.pow((density / (k2 + density)), 2);
     }
 
     private List<Ant> initializeAnts() {

@@ -15,10 +15,31 @@ public class Tester {
     private static DecimalFormat doubleFormatter = new DecimalFormat("#.####");
 
     public static void main(String[] args) {
-        clusterDataset(DatasetType.Glass);
+        Dataset dataset = DatasetBuilder.buildDataSet(DatasetType.Glass);
+        IDataClusterer clusterer = null;
+        switch (args[0]) {
+            case "dbscan":
+                clusterer = ClustererFactory.buildClusterer(ClustererType.DBSCAN);
+                break;
+            case "kmeans":
+                clusterer = ClustererFactory.buildClusterer(ClustererType.kMeans);
+                break;
+            case "pso":
+                clusterer = ClustererFactory.buildClusterer(ClustererType.PSOClusterer);
+                break;
+            case "aco":
+                clusterer = ClustererFactory.buildClusterer(ClustererType.ACOClusterer);
+                break;
+            case "comp":
+            default:
+                clusterDataset(DatasetType.Glass);
+        }
+        if (clusterer != null) {
+            System.out.println(clusterer.toString());
+            Clustering clustering = clusterer.cluster(dataset);
+            printClusterStats(clustering, clusterer.toString());
+        }
     }
-
-
 
     private static void clusterDataset(DatasetType type) {
         Dataset dataset = DatasetBuilder.buildDataSet(type);
@@ -52,13 +73,13 @@ public class Tester {
         });
     }
 
-    private static void printClusterStats(Clustering clusters, ClustererType type) {
+    private static void printClusterStats(Clustering clusters, String type) {
         if (clusters.size() == 0) {
             System.out.println("No clusters!");
             return;
         }
         double quality = clusters.evaluateFitness();
-        System.out.println(type.toString());
+        System.out.println(type);
         System.out.println("Quality: " + quality);
         for (Cluster cluster : clusters) {
             System.out.println("Cluster: " + cluster.getClusterId() + ", count: " + cluster.size());
@@ -77,9 +98,9 @@ public class Tester {
         for (int i = 0; i <= 20; i++) {
             for (double j = 0; j <= 20; j += 0.05) {
                 System.out.println("MinPts: " + i + ", Epsilon: " + j);
-                IDataClusterer DBSCAN = new DBSCAN(i, j);
-                Clustering clustering = DBSCAN.cluster(dataset);
-                printClusterStats(clustering, ClustererType.DBSCAN);
+                IDataClusterer clusterer = new DBSCAN(i, j);
+                Clustering clustering = clusterer.cluster(dataset);
+                printClusterStats(clustering, clusterer.toString());
                 if (clustering.evaluateFitness() < bestQuality) {
                     bestQuality = clustering.evaluateFitness();
                     minPoints = i;

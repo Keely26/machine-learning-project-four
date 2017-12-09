@@ -2,6 +2,11 @@ package Data;
 
 import java.util.Arrays;
 
+/**
+ * Datum class represents an example data point from the dataset
+ * Contains the features of the example point, as well as the cluster ID, and various attributes specific
+ * to individual clustering algorithms
+ */
 public class Datum {
 
     public final double[] features;

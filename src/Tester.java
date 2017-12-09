@@ -11,19 +11,19 @@ import java.util.List;
 
 public class Tester {
 
+    private static int numTrials = 30;
     private static boolean loggingEnabled = false;
-
     private static DecimalFormat doubleFormatter = new DecimalFormat("#.######");
 
     public static void main(String[] args) {
         Dataset dataset = DatasetBuilder.buildDataSet(DatasetType.Iris);
         IDataClusterer cluster = ClustererFactory.buildClusterer(ClustererType.ACOClusterer);
         cluster.cluster(dataset);
-//        tenFoldValidation(DatasetType.Iris);
-//        tenFoldValidation(DatasetType.Glass);
-//        tenFoldValidation(DatasetType.Banknote);
-//        tenFoldValidation(DatasetType.Parkinsons);
-//        tenFoldValidation(DatasetType.Retinopathy);
+        tenFoldValidation(DatasetType.Iris);
+        tenFoldValidation(DatasetType.Glass);
+        tenFoldValidation(DatasetType.Banknote);
+        tenFoldValidation(DatasetType.Parkinsons);
+        tenFoldValidation(DatasetType.Retinopathy);
     }
 
     private static void tenFoldValidation(DatasetType type) {
@@ -38,7 +38,7 @@ public class Tester {
         System.out.println("Computing 10 fold statistics for " + dataset.toString());
 
         clusterers.forEach(clusterer -> {
-            double[] fitnesses = new double[10];
+            double[] fitnesses = new double[numTrials];
 
             System.out.println(clusterer.toString());
 

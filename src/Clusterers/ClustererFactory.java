@@ -25,7 +25,7 @@ public class ClustererFactory {
     private static final double socialWeight = 1.0;
 
     /* Competitive Network Parameters */
-    private static final double learningRate = 0.3;
+    private static final double learningRate = 0.001;
 
     /* DBSCAN Parameters */
     private static final int minPoints = 8;

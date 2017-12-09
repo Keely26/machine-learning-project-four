@@ -53,6 +53,7 @@ public class ACOClusterer implements IDataClusterer {
                 move(grid, currentAnt);
             }
 
+            System.out.println("Quality: " + grid.buildClustering(numClusters).evaluateFitness());
             iteration++;
         } while (shouldContinue(iteration));
 

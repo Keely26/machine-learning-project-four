@@ -3,7 +3,8 @@ import Clusterers.DBSCAN.DBSCAN;
 import Data.*;
 import Utilites.Utilities;
 
-import java.io.*;
+import java.io.OutputStream;
+import java.io.PrintStream;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -15,11 +16,14 @@ public class Tester {
     private static DecimalFormat doubleFormatter = new DecimalFormat("#.######");
 
     public static void main(String[] args) {
-        tenFoldValidation(DatasetType.Iris);
-        tenFoldValidation(DatasetType.Glass);
-        tenFoldValidation(DatasetType.Banknote);
-        tenFoldValidation(DatasetType.Parkinsons);
-        tenFoldValidation(DatasetType.Retinopathy);
+        Dataset dataset = DatasetBuilder.buildDataSet(DatasetType.Iris);
+        IDataClusterer cluster = ClustererFactory.buildClusterer(ClustererType.ACOClusterer);
+        cluster.cluster(dataset);
+//        tenFoldValidation(DatasetType.Iris);
+//        tenFoldValidation(DatasetType.Glass);
+//        tenFoldValidation(DatasetType.Banknote);
+//        tenFoldValidation(DatasetType.Parkinsons);
+//        tenFoldValidation(DatasetType.Retinopathy);
     }
 
     private static void tenFoldValidation(DatasetType type) {
@@ -43,7 +47,7 @@ public class Tester {
                 if (!loggingEnabled) {
                     System.setOut(new PrintStream(new OutputStream() {
                         @Override
-                        public void write(int b) throws IOException {
+                        public void write(int b) {
                             // NOP
                         }
                     }));

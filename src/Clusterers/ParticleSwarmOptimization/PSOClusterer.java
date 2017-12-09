@@ -36,7 +36,7 @@ public class PSOClusterer implements IDataClusterer {
 
         int iteration = 0;
         do {
-            logIteration(iteration, dataset);
+          //  logIteration(iteration, dataset);
             // For each particle, update position, evaluate, update velocity, set personal and global bests
             particleSwarm.parallelStream().forEach(particle -> {
                 particle.updatePosition();
@@ -44,6 +44,7 @@ public class PSOClusterer implements IDataClusterer {
             });
 
             iteration++;
+            System.out.println("Quality: " + Utilities.assignPointsToClusters(dataset, particleSwarm.getGlobalBest()).evaluateFitness());
         } while (iteration < maxIterations && notConverged());
 
         // Retrieve best clustering

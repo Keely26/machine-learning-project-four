@@ -4,8 +4,7 @@ import Clusterers.IDataClusterer;
 import Data.*;
 import Utilites.Utilities;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class CompetitiveLearning implements IDataClusterer {
 
@@ -26,6 +25,7 @@ public class CompetitiveLearning implements IDataClusterer {
         int iteration = 0;
         do {
             dataset.forEach(example -> example.setCluster(updateNetwork(example.features)));
+            System.out.println("Quality: " + buildClustering(dataset).evaluateFitness());
             iteration++;
         } while (shouldContinue(iteration));
 
@@ -77,9 +77,14 @@ public class CompetitiveLearning implements IDataClusterer {
 
     // Build new neurons, set centroids randomly
     private void initializeNetwork(Dataset dataset) {
+        List<Integer> indices = new ArrayList<>(dataset.size());
+        for (int i = 0; i < dataset.size(); i++) {
+            indices.add(i);
+        }
+        Collections.shuffle(indices);
         this.neurons = new ArrayList<>();
         for (int i = 0; i < numClusters; i++) {
-            this.neurons.add(new Neuron(i, dataset.get(Utilities.randomInteger(dataset.size())).features));
+            this.neurons.add(new Neuron(i, dataset.get(indices.remove(0)).features));
         }
     }
 

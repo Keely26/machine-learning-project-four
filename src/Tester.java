@@ -15,6 +15,10 @@ public class Tester {
     private static boolean loggingEnabled = false;
     private static DecimalFormat doubleFormatter = new DecimalFormat("#.######");
 
+    private static int bestMin = -1;
+    private static double bestEp = -1;
+    private static double bestQual = -1;
+
     public static void main(String[] args) {
         Dataset dataset = DatasetBuilder.buildDataSet(DatasetType.Iris);
         IDataClusterer cluster = ClustererFactory.buildClusterer(ClustererType.ACOClusterer);
@@ -29,21 +33,20 @@ public class Tester {
     private static void tenFoldValidation(DatasetType type) {
         Dataset dataset = DatasetBuilder.buildDataSet(type);
         List<IDataClusterer> clusterers = new ArrayList<>();
-        clusterers.add(ClustererFactory.buildClusterer(ClustererType.kMeans));
-        clusterers.add(ClustererFactory.buildClusterer(ClustererType.DBSCAN));
-        clusterers.add(ClustererFactory.buildClusterer(ClustererType.CompetitiveNetwork));
         clusterers.add(ClustererFactory.buildClusterer(ClustererType.PSOClusterer));
-        clusterers.add(ClustererFactory.buildClusterer(ClustererType.ACOClusterer));
 
-        System.out.println("Computing 10 fold statistics for " + dataset.toString());
+        System.out.println("Computing " + numTrials + " trial statistics for " + dataset.toString());
 
         clusterers.forEach(clusterer -> {
             double[] fitnesses = new double[numTrials];
+            double[] runtimes = new double[numTrials];
 
             System.out.println(clusterer.toString());
 
-            for (int i = 0; i < 10; i++) {
-                System.out.print("Trial ".concat(Integer.toString(i + 1).concat(".. ")));
+            for (int i = 0; i < numTrials; i++) {
+                System.out.print("Trial "
+                        .concat(Integer.toString(i + 1))
+                        .concat(".. "));
                 if (!loggingEnabled) {
                     System.setOut(new PrintStream(new OutputStream() {
                         @Override
@@ -53,32 +56,55 @@ public class Tester {
                     }));
                 }
                 long startTime = System.currentTimeMillis();
-                fitnesses[i] = clusterer.cluster(dataset).evaluateFitness();
+                Clustering clustering = clusterer.cluster(dataset);
+                double quality = clustering.evaluateFitness();
+                printClusterStats(clustering, quality);
+                fitnesses[i] = quality;
+                runtimes[i] = (System.currentTimeMillis() - startTime) / 1000.0;
 
                 if (!loggingEnabled) {
                     Utilities.setConsoleOut();
                 }
-                System.out.println("done, Runtime: ".concat(Double.toString((System.currentTimeMillis() - startTime) / 1000.0)).concat("s"));
+                System.out.println("done, Runtime: ".concat(Double.toString(runtimes[i]).concat("s")));
+                resetDataset(dataset);
             }
 
             // Compute statistics
-            double mean = 0.0, stdDev = 0.0, window;
-            for (double fitness : fitnesses) {
-                mean += fitness;
+            double meanFit = 0.0, meanRun = 0.0, stdDevFit = 0.0, stdDevRun = 0.0, windowFit, windowRun;
+            for (int i = 0; i < numTrials; i++) {
+                meanFit += fitnesses[i];
+                meanRun += runtimes[i];
             }
-            mean /= fitnesses.length;
-            for (double fitness : fitnesses) {
-                stdDev += Math.pow(mean - fitness, 2);
-            }
-            stdDev = Math.sqrt(stdDev / fitnesses.length);
-            window = (1.96) * stdDev / Math.sqrt(fitnesses.length);
+            meanFit /= numTrials;
+            meanRun /= numTrials;
+            for (int i = 0; i < numTrials; i++) {
+                stdDevFit += Math.pow(meanFit - fitnesses[i], 2);
+                stdDevRun += Math.pow(meanRun - runtimes[i], 2);
 
-            System.out.println("Mean:\t\t\t".concat(doubleFormatter.format(mean)));
-            System.out.println("StdDev:\t\t\t".concat(doubleFormatter.format(stdDev)));
-            System.out.println("95% interval:\t("
-                    .concat(doubleFormatter.format(mean - window))
+            }
+            stdDevFit = Math.sqrt(stdDevFit / numTrials);
+            stdDevRun = Math.sqrt(stdDevRun / numTrials);
+            windowFit = (1.96) * stdDevFit / Math.sqrt(numTrials);
+            windowRun = (1.96) * stdDevRun / Math.sqrt(numTrials);
+
+            System.out.println("Mean Quality:\t\t\t"
+                    .concat(doubleFormatter.format(meanFit)));
+            System.out.println("StdDev Quality:\t\t\t"
+                    .concat(doubleFormatter.format(stdDevFit)));
+            System.out.println("95% Quality interval:\t("
+                    .concat(doubleFormatter.format(meanFit - windowFit))
                     .concat(", ")
-                    .concat(doubleFormatter.format(mean + window))
+                    .concat(doubleFormatter.format(meanFit + windowFit))
+                    .concat(")"));
+
+            System.out.println("Mean Runtime:\t\t\t"
+                    .concat(doubleFormatter.format(meanRun)));
+            System.out.println("StdDev Runtime:\t\t\t"
+                    .concat(doubleFormatter.format(stdDevRun)));
+            System.out.println("95% Runtime interval:\t("
+                    .concat(doubleFormatter.format(meanRun - windowRun))
+                    .concat(", ")
+                    .concat(doubleFormatter.format(meanRun + windowRun))
                     .concat(")"));
 
             System.out.println();
@@ -86,13 +112,12 @@ public class Tester {
     }
 
 
-    private static void printClusterStats(Clustering clusters, ClustererType type) {
+    private static void printClusterStats(Clustering clusters, double quality) {
         if (clusters.size() == 0) {
             System.out.println("No clusters!");
             return;
         }
-        double quality = clusters.evaluateFitness();
-        System.out.println(type.toString());
+
         System.out.println("Quality: " + quality);
         for (Cluster cluster : clusters) {
             System.out.println("Cluster: " + cluster.getClusterId() + ", count: " + cluster.size());
@@ -104,25 +129,25 @@ public class Tester {
         dataset.parallelStream().forEach(datum -> datum.setCluster(0));
     }
 
-    private static void findGoodParams(Dataset dataset) {
-        int minPoints = 0;
-        double epsilon = 0;
-        double bestQuality = 0.0;
-        for (int i = 5; i <= 20; i++) {
-            for (double j = 0; j <= 20; j += 0.1) {
+    private static void findGoodParams(DatasetType type) {
+        Dataset dataset = DatasetBuilder.buildDataSet(type);
+        for (int i = 5; i <= 15; i++) {
+            for (double j = 0; j <= 10; j += 0.25) {
                 System.out.println("MinPts: " + i + ", Epsilon: " + j);
                 IDataClusterer DBSCAN = new DBSCAN(i, j);
                 Clustering clustering = DBSCAN.cluster(dataset);
-                printClusterStats(clustering, ClustererType.DBSCAN);
-                if (clustering.evaluateFitness() > bestQuality) {
-                    bestQuality = clustering.evaluateFitness();
-                    minPoints = i;
-                    epsilon = j;
+                double quality = clustering.evaluateFitness();
+                if (quality > bestQual) {
+                    bestQual = quality;
+                    bestEp = j;
+                    bestMin = i;
+
                 }
+                printClusterStats(clustering, quality);
                 resetDataset(dataset);
             }
         }
-        System.out.println("MinPts: " + minPoints);
-        System.out.println("Epsilon: " + epsilon);
+        System.out.println("MinPts: " + bestMin);
+        System.out.println("Epsilon: " + bestEp);
     }
 }

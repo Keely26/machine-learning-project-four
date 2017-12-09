@@ -84,7 +84,7 @@ public class ACOClusterer implements IDataClusterer {
      * Return true until either the maximum number of iterations has been reached.
      */
     private boolean shouldContinue(int iteration) {
-        return iteration < 10000;
+        return iteration < 1000;
     }
 
     /**

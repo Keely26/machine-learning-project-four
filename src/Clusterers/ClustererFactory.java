@@ -24,18 +24,18 @@ public class ClustererFactory {
     private static final double radius = 9500.0;
 
     /* PSO Parameters */
-    private static final int numParticles = 15;
-    private static final int maxIterations = 500;
-    private static final double inertia = 0.3;
-    private static final double cognitiveWeight = 1.0;
-    private static final double socialWeight = 1.0;
+    private static final int numParticles = 80;
+    private static final int maxIterations = 1000;
+    private static final double inertia = 1;
+    private static final double cognitiveWeight = 3.5;
+    private static final double socialWeight = 3.5;
 
     /* Competitive Network Parameters */
-    private static final double learningRate = 0.001;
+    private static final double learningRate = 0.1;
 
     /* DBSCAN Parameters */
     private static final int minPoints = 8;
-    private static final double epsilon = 1;
+    private static final double epsilon = 9.5;
 
     public static IDataClusterer buildClusterer(ClustererType type) {
         switch (type) {

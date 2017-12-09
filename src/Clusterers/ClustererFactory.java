@@ -12,8 +12,9 @@ public class ClustererFactory {
     private static final int numClusters = 3;
 
     /* ACO Parameters */
-    private static final int numAnts = 900;
-    private static final double k1 = 1;
+    private static final int numAnts = 200;
+    private static final int gridSize = 100;
+    private static final double k1 = 3;
     private static final double k2 = 1;
     private static final double radius = 9500.0;
 
@@ -34,7 +35,7 @@ public class ClustererFactory {
     public static IDataClusterer buildClusterer(ClustererType type) {
         switch (type) {
             case ACOClusterer:
-                return new ACOClusterer(numAnts, k1, k2, radius, numClusters);
+                return new ACOClusterer(numAnts, gridSize, k1, k2, radius, numClusters);
             case PSOClusterer:
                 return new PSOClusterer(numClusters, numParticles, maxIterations, inertia, cognitiveWeight, socialWeight);
             case CompetitiveNetwork:

@@ -7,6 +7,7 @@ public class Datum {
     public final double[] features;
     private int cluster;
     private boolean core;
+    private boolean carried;
 
     public Datum(double[] features) {
         this.features = features;
@@ -31,5 +32,13 @@ public class Datum {
     @Override
     public String toString() {
         return Integer.toString(cluster).concat(", ").concat(Arrays.toString(features));
+    }
+
+    public boolean isCarried() {
+        return carried;
+    }
+
+    public void setCarried(boolean carried) {
+        this.carried = carried;
     }
 }

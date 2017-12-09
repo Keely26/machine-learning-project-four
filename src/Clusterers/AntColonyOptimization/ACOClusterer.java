@@ -9,11 +9,12 @@ import java.util.*;
 
 public class ACOClusterer implements IDataClusterer {
 
-    private final int numAnts, numClusters;
+    private final int numAnts, gridSize, numClusters;
     private final double k1, k2, radius;
 
-    public ACOClusterer(int numAnts, double k1, double k2, double radius, int numClusters) {
+    public ACOClusterer(int numAnts, int gridSize, double k1, double k2, double radius, int numClusters) {
         this.numAnts = numAnts;
+        this.gridSize = gridSize;
         this.k1 = k1;
         this.k2 = k2;
         this.radius = radius;
@@ -24,29 +25,28 @@ public class ACOClusterer implements IDataClusterer {
     public Clustering cluster(Dataset dataset) {
         // Initialize
         List<Ant> ants = initializeAnts();
-        Grid grid = new Grid(dataset, ants);
-        double count = 0.0;
+        Grid grid = new Grid(gridSize, dataset, ants);
+        double avgFitness = 0.0;
 
         int iteration = 0;
         do {
-            // For each ant
             for (Ant currentAnt : ants) {
-                // If not carrying
-                if (!currentAnt.isCarrying()) {
-                    // If site has food
-                    if (grid.hasFood(currentAnt.getLocation())) {
-                        // Check if pick up
-                        if (shouldPickUp(currentAnt, grid)) {
-                            currentAnt.addFood(grid.getFood(currentAnt.getLocation()));
-                            currentAnt.setPickUpLocation();
-                        }
-                    }
-                } else {
+                GridLocation currentLocation = currentAnt.getLocation();
+                if (currentAnt.isCarrying()) {
                     // Ant is carrying
                     if (!grid.hasFood(currentAnt.getLocation())) {
                         // Check if should drop
                         if (!currentAnt.getLocation().equals(currentAnt.getPickUpLocation()) && shouldDrop(currentAnt, grid)) {
-                            grid.putFood(currentAnt.getLocation(), currentAnt.removeFood());
+                            grid.dropFood(currentAnt.getLocation(), currentAnt.getPickUpLocation());
+                            currentAnt.drop();
+                        }
+                    }
+                } else {
+                    if (grid.hasFood(currentAnt.getLocation())) {   // If site has food
+                        // Check if pick up
+                        if (shouldPickUp(currentAnt, grid)) {
+                            grid.pickUpFood(currentLocation);
+                            currentAnt.setPickUpLocation();
                         }
                     }
                 }
@@ -54,13 +54,15 @@ public class ACOClusterer implements IDataClusterer {
                 move(grid, currentAnt);
             }
 
-           count += grid.buildClustering(numClusters).evaluateFitness();
+           avgFitness += grid.buildClustering(numClusters).evaluateFitness();
 
             if (iteration % 100 == 0) {
                 //printStats(grid, ants);
                 //System.out.println(grid.buildClustering(numClusters).evaluateFitness());
-                count /= 100;
-                System.out.println(count);
+                avgFitness /= 100;
+                System.out.println(avgFitness);
+                printStats(grid, ants);
+                avgFitness = 0;
             }
 
 
@@ -71,17 +73,14 @@ public class ACOClusterer implements IDataClusterer {
     }
 
     private void printStats(Grid grid, List<Ant> ants) {
-        System.out.println(grid.buildClustering(numClusters).evaluateFitness());
-        System.out.println("num ants: " + ants.size());
-        System.out.println("num datum on grid: " + grid.checkNumDataPoints());
-        System.out.println("num datum");
+        System.out.println("Points on Grid: " + grid.checkNumDataPoints());
         int count = 0;
         for (Ant ant : ants) {
             if (ant.isCarrying()) {
                 count++;
             }
         }
-        System.out.println("num ants with food: " + count);
+        System.out.println("Points on Ants: " + count);
     }
 
 
@@ -142,8 +141,12 @@ public class ACOClusterer implements IDataClusterer {
     }
 
     private boolean shouldDrop(Ant ant, Grid grid) {
-        double density = grid.getDensity(ant, this.radius);
-        return Utilities.randomDouble(1) < Math.pow((density / (k2 + density)), 2);
+        if (grid.isValidDrop(ant.getLocation())) {
+            double density = grid.getDensity(ant, this.radius);
+            return Utilities.randomDouble(1) < Math.pow((density / (k2 + density)), 2);
+        } else {
+            return false;
+        }
     }
 
     private List<Ant> initializeAnts() {

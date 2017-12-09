@@ -12,12 +12,12 @@ public class Grid {
     private HashMap<Integer, Boolean> antOccupiedMap;
     private int gridLength;
 
-    public Grid(Dataset dataset, List<Ant> ants) {
-        this.gridLength = dataset.size() * 2;
+    Grid(int gridSize, Dataset dataset, List<Ant> ants) {
+        this.gridLength = gridSize;
         initializeGrid(dataset, ants);
     }
 
-    public void initializeGrid(Dataset dataset, List<Ant> ants) {
+    private void initializeGrid(Dataset dataset, List<Ant> ants) {
         this.grid = new Datum[gridLength][gridLength];
         this.antOccupiedMap = new HashMap<>();
 
@@ -54,21 +54,30 @@ public class Grid {
     }
 
     public boolean hasFood(GridLocation location) {
-        return location.x >= 0
-                && location.x < this.grid.length
-                && location.y >= 0
-                && location.y < this.grid[0].length
-                && this.grid[location.x][location.y] != null;
+        return checkBounds(location.x, location.y)
+                && this.grid[location.x][location.y] != null
+                && !this.grid[location.x][location.y].isCarried();
     }
 
-    public Datum getFood(GridLocation location) {
-        Datum food = this.grid[location.x][location.y];
-        this.grid[location.x][location.y] = null;
-        return food;
+    public boolean isValidDrop(GridLocation location) {
+        return this.grid[location.x][location.y] == null;
     }
 
-    public void putFood(GridLocation location, Datum food) {
-        this.grid[location.x][location.y] = food;
+    public void pickUpFood(GridLocation location) {
+        if (!checkBounds(location.x, location.y)) {
+            throw new IndexOutOfBoundsException("Ant is lost. Ant is upset. Ant crashes your program.");
+        }
+        this.grid[location.x][location.y].setCarried(true);
+    }
+
+    public void dropFood(GridLocation newLocation, GridLocation oldLocation) {
+        Datum food = this.grid[oldLocation.x][oldLocation.y];
+        if (food == null) {
+            throw new NullPointerException("Ant's food is null. Ant doesn't understand null. Ant crashes your program.");
+        }
+        food.setCarried(false);
+        this.grid[oldLocation.x][oldLocation.y] = null;
+        this.grid[newLocation.x][newLocation.y] = food;
     }
 
     public double getDensity(Ant ant, double radius) {
@@ -91,8 +100,15 @@ public class Grid {
             }
         }
 
+        double avgDistance;
+        if (ant.isCarrying()) {
+            // Compute the avg distance between the point the ant is carrying and neighboring points
+            Datum food = this.grid[ant.getPickUpLocation().x][ant.getPickUpLocation().y];
+            avgDistance = computeAverageDistance(neighborhood, food.features);
+        } else {
+            avgDistance = computeAverageDistance(neighborhood, grid[ant.getLocation().x][ant.getLocation().y].features);
+        }
 
-        double avgDistance = computeAverageDistance(neighborhood, ant.getFood() == null ? this.grid[ant.getLocation().x][ant.getLocation().y].features : ant.getFood().features);
         if (avgDistance == 0.0) {
             return avgDistance;
         }
@@ -115,11 +131,7 @@ public class Grid {
 
 
     public boolean isUnoccupied(GridLocation location) {
-        return location.x >= 0
-                && location.y >= 0
-                && location.x < this.grid.length
-                && location.y < this.grid[0].length
-                && this.antOccupiedMap.get(location.hashCode()) == null;
+        return checkBounds(location.x, location.y) && this.antOccupiedMap.get(location.hashCode()) == null;
     }
 
     public void updateLocation(GridLocation oldLocation, GridLocation newLocation) {
@@ -158,11 +170,15 @@ public class Grid {
         return clustering;
     }
 
+    private boolean checkBounds(int x, int y) {
+        return x >= 0 && y >= 0 && x < this.grid.length && y < this.grid[0].length;
+    }
+
     public int checkNumDataPoints() {
         int count = 0;
-        for (int i = 0; i < this.grid.length; i++) {
+        for (Datum[] row : this.grid) {
             for (int j = 0; j < this.grid.length; j++) {
-                if (this.grid[i][j] != null) {
+                if (row[j] != null) {
                     count++;
                 }
             }

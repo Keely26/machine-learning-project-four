@@ -21,7 +21,7 @@ public class Clustering extends ArrayList<Cluster> {
         double interClusterDistance = evaluateInterClusterDistance();
         double intraClusterDistance = evaluateIntraClusterDistance();
         if (interClusterDistance > 0) {
-            return interClusterDistance  / intraClusterDistance;
+            return interClusterDistance  + 1 / intraClusterDistance;
         } else {
             return 1 / intraClusterDistance;
         }

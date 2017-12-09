@@ -101,11 +101,14 @@ public class CompetitiveLearning implements IDataClusterer {
 
     // Build new neurons, set centroids randomly
     private void initializeNetwork(Dataset dataset) {
+        // Add potential indices to list
         List<Integer> indices = new ArrayList<>(dataset.size());
         for (int i = 0; i < dataset.size(); i++) {
             indices.add(i);
         }
         Collections.shuffle(indices);
+
+        // Remove values from shuffled list to ensure no duplicates
         this.neurons = new ArrayList<>();
         for (int i = 0; i < numClusters; i++) {
             this.neurons.add(new Neuron(i, dataset.get(indices.remove(0)).features));

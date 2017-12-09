@@ -1,6 +1,7 @@
 package Clusterers;
 
 public enum ClustererType {
+
     ACOClusterer("Ant Colony Optimization"),
     PSOClusterer("Particle Swarm Optimization"),
     CompetitiveNetwork("Competitive Learning Network"),

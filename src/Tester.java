@@ -15,25 +15,18 @@ public class Tester {
     private static boolean loggingEnabled = false;
     private static DecimalFormat doubleFormatter = new DecimalFormat("#.######");
 
-    private static int bestMin = -1;
-    private static double bestEp = -1;
-    private static double bestQual = -1;
-
     public static void main(String[] args) {
-        Dataset dataset = DatasetBuilder.buildDataSet(DatasetType.Iris);
-        IDataClusterer cluster = ClustererFactory.buildClusterer(ClustererType.ACOClusterer);
-        cluster.cluster(dataset);
-        tenFoldValidation(DatasetType.Iris);
-        tenFoldValidation(DatasetType.Glass);
-        tenFoldValidation(DatasetType.Banknote);
-        tenFoldValidation(DatasetType.Parkinsons);
-        tenFoldValidation(DatasetType.Retinopathy);
+        runTrials(DatasetType.Iris);
+        runTrials(DatasetType.Glass);
+        runTrials(DatasetType.Banknote);
+        runTrials(DatasetType.Parkinsons);
+        runTrials(DatasetType.Retinopathy);
     }
 
-    private static void tenFoldValidation(DatasetType type) {
+    private static void runTrials(DatasetType type) {
         Dataset dataset = DatasetBuilder.buildDataSet(type);
         List<IDataClusterer> clusterers = new ArrayList<>();
-        clusterers.add(ClustererFactory.buildClusterer(ClustererType.PSOClusterer));
+        clusterers.add(ClustererFactory.buildClusterer(ClustererType.CompetitiveNetwork));
 
         System.out.println("Computing " + numTrials + " trial statistics for " + dataset.toString());
 
@@ -131,6 +124,9 @@ public class Tester {
 
     private static void findGoodParams(DatasetType type) {
         Dataset dataset = DatasetBuilder.buildDataSet(type);
+        int bestMin = -1;
+        double bestEp = -1;
+        double bestQual = -1;
         for (int i = 5; i <= 15; i++) {
             for (double j = 0; j <= 10; j += 0.25) {
                 System.out.println("MinPts: " + i + ", Epsilon: " + j);

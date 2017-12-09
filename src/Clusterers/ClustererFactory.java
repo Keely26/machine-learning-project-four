@@ -37,6 +37,9 @@ public class ClustererFactory {
     private static final int minPoints = 8;
     private static final double epsilon = 9.5;
 
+    /**
+     * Return a new instance of the specified clusterer using the tunable parameters set above
+     */
     public static IDataClusterer buildClusterer(ClustererType type) {
         switch (type) {
             case ACOClusterer:

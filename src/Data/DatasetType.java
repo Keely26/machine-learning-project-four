@@ -1,6 +1,7 @@
 package Data;
 
 public enum DatasetType {
+
     Banknote("banknote"),
     Glass("glass"),
     Iris("iris"),

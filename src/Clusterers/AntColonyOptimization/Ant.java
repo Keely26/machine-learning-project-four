@@ -1,7 +1,8 @@
 package Clusterers.AntColonyOptimization;
 
 /**
- * Ant class acts as a container to hold a set of antID numbers, their positions, and their paths
+ * Ants need to maintain their current location and a pointer to the location of the data point
+ * they are carrying
  */
 public class Ant {
 

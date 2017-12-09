@@ -9,9 +9,7 @@ public class Dataset extends ArrayList<Datum> {
 
     private String name;
 
-    public Dataset() {
-
-    }
+    public Dataset() {}
 
     public Dataset(List<Datum> data) {
         super(data);
@@ -20,10 +18,6 @@ public class Dataset extends ArrayList<Datum> {
     // Return the length of the data vectors in the dataset
     public int getFeatureSize() {
         return this.get(0).features.length;
-    }
-
-    public void shuffle() {
-        Collections.shuffle(this);
     }
 
     // Order elements by cluster ID descending

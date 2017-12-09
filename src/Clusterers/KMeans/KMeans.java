@@ -36,8 +36,12 @@ public class KMeans implements IDataClusterer {
         // While not converged
         do {
             oldClustering = clustering;
+            // Assign the data points to clusters using the current centroids
             clustering = Utilities.assignPointsToClusters(dataset, currentCentroids);
+            // Recompute centroids
             currentCentroids = clustering.getCentroids();
+
+            // Log status
             iteration++;
             System.out.println("Quality: " + clustering.evaluateFitness());
         } while (shouldContinue(iteration, clustering, oldClustering));

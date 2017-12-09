@@ -10,19 +10,21 @@ public class Grid {
 
     private Datum[][] grid;
     private HashMap<Integer, Boolean> antOccupiedMap;
+    private int gridLength;
 
     public Grid(Dataset dataset, List<Ant> ants) {
+        this.gridLength = dataset.size() * 2;
         initializeGrid(dataset, ants);
     }
 
     public void initializeGrid(Dataset dataset, List<Ant> ants) {
-        this.grid = new Datum[dataset.size()][dataset.size()];
+        this.grid = new Datum[gridLength][gridLength];
         this.antOccupiedMap = new HashMap<>();
 
         // Place data points
         List<GridLocation> locations = new ArrayList<>();
-        for (int i = 0; i < dataset.size(); i++) {
-            for (int j = 0; j < dataset.size(); j++) {
+        for (int i = 0; i < gridLength; i++) {
+            for (int j = 0; j < gridLength; j++) {
                 locations.add(new GridLocation(i, j));
             }
         }
@@ -36,8 +38,8 @@ public class Grid {
 
         // Place ants
         locations = new ArrayList<>();
-        for (int i = 0; i < dataset.size(); i++) {
-            for (int j = 0; j < dataset.size(); j++) {
+        for (int i = 0; i < gridLength; i++) {
+            for (int j = 0; j < gridLength; j++) {
                 locations.add(new GridLocation(i, j));
             }
         }
@@ -71,6 +73,7 @@ public class Grid {
 
     public double getDensity(Ant ant, double radius) {
         Dataset neighborhood = new Dataset();
+        Dataset gridNeighborhood = new Dataset();
         double[] antLocation = new double[]{ant.getLocation().x, ant.getLocation().y};
 
         for (int i = 0; i < this.grid.length; i++) {
@@ -82,22 +85,20 @@ public class Grid {
                     double distance = Utilities.computeDistance(antLocation, space);
                     if (distance < radius) {
                         neighborhood.add(gridIJ);
+                        gridNeighborhood.add(new Datum(new double[]{i, j}));
                     }
                 }
             }
         }
 
-        Datum payload = ant.getFood();
-        if (payload == null) {
-            return 0.0;
-        }
+
         double avgDistance = computeAverageDistance(neighborhood, ant.getFood() == null ? this.grid[ant.getLocation().x][ant.getLocation().y].features : ant.getFood().features);
         if (avgDistance == 0.0) {
             return avgDistance;
         }
 
         double density = 0.0;
-        for (Datum neighbor : neighborhood) {
+        for (Datum neighbor : gridNeighborhood) {
             density += (1 / radius) * (Utilities.computeDistance(antLocation, neighbor.features) / avgDistance);
         }
 
@@ -155,6 +156,18 @@ public class Grid {
         }
 
         return clustering;
+    }
+
+    public int checkNumDataPoints() {
+        int count = 0;
+        for (int i = 0; i < this.grid.length; i++) {
+            for (int j = 0; j < this.grid.length; j++) {
+                if (this.grid[i][j] != null) {
+                    count++;
+                }
+            }
+        }
+        return count;
     }
 }
 

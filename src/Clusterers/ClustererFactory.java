@@ -12,10 +12,10 @@ public class ClustererFactory {
     private static final int numClusters = 3;
 
     /* ACO Parameters */
-    private static final int numAnts = 100;
-    private static final double k1 = 2;
-    private static final double k2 = 2;
-    private static final double radius = 50.0;
+    private static final int numAnts = 900;
+    private static final double k1 = 1;
+    private static final double k2 = 1;
+    private static final double radius = 9500.0;
 
     /* PSO Parameters */
     private static final int numParticles = 15;

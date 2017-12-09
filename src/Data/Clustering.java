@@ -21,7 +21,7 @@ public class Clustering extends ArrayList<Cluster> {
         double interClusterDistance = evaluateInterClusterDistance();
         double intraClusterDistance = evaluateIntraClusterDistance();
         if (interClusterDistance > 0) {
-            return interClusterDistance + 1 / intraClusterDistance;
+            return interClusterDistance  / intraClusterDistance;
         } else {
             return 1 / intraClusterDistance;
         }
@@ -54,7 +54,13 @@ public class Clustering extends ArrayList<Cluster> {
     public double evaluateInterClusterDistance() {
         double interClusterDistance = 0.0;
         // Filter out empty clusters?
-        List<double[]> centroids = this.parallelStream().map(Cluster::getCentroid).collect(Collectors.toList());
+        List<double[]> centroids = new ArrayList<>();
+        for (int i = 0; i < this.size(); i++) {
+            double[] centroid = this.get(i).getCentroid();
+            if (centroid != null) {
+                centroids.add(this.get(i).getCentroid());
+            }
+        }
         int count = 0;
         for (int i = 0; i < centroids.size(); i++) {
             for (int j = i; j < centroids.size(); j++) {

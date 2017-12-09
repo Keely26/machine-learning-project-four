@@ -25,6 +25,7 @@ public class ACOClusterer implements IDataClusterer {
         // Initialize
         List<Ant> ants = initializeAnts();
         Grid grid = new Grid(dataset, ants);
+        double count = 0.0;
 
         int iteration = 0;
         do {
@@ -53,12 +54,36 @@ public class ACOClusterer implements IDataClusterer {
                 move(grid, currentAnt);
             }
 
-            System.out.println("Quality: " + grid.buildClustering(numClusters).evaluateFitness());
+           count += grid.buildClustering(numClusters).evaluateFitness();
+
+            if (iteration % 100 == 0) {
+                //printStats(grid, ants);
+                //System.out.println(grid.buildClustering(numClusters).evaluateFitness());
+                count /= 100;
+                System.out.println(count);
+            }
+
+
             iteration++;
         } while (shouldContinue(iteration));
 
         return grid.buildClustering(numClusters);
     }
+
+    private void printStats(Grid grid, List<Ant> ants) {
+        System.out.println(grid.buildClustering(numClusters).evaluateFitness());
+        System.out.println("num ants: " + ants.size());
+        System.out.println("num datum on grid: " + grid.checkNumDataPoints());
+        System.out.println("num datum");
+        int count = 0;
+        for (Ant ant : ants) {
+            if (ant.isCarrying()) {
+                count++;
+            }
+        }
+        System.out.println("num ants with food: " + count);
+    }
+
 
     private boolean shouldContinue(int iteration) {
         return iteration < 10000;

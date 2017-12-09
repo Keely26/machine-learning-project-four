@@ -12,8 +12,10 @@ public class Utilities {
     private static final Random random = new Random(System.nanoTime());
 
     public static double computeDistance(double[] point1, double[] point2) {
-        assert point1.length == point2.length : "Non-congruent dimensions!";
-
+        if (point1 == null || point2 == null ||point1.length != point2.length) {
+            System.out.println("Non-congruent dimensions!");
+            System.exit(-1);
+        }
         double sum = 0.0;
         for (int i = 0; i < point1.length; i++) {
             sum += Math.pow(point1[i] - point2[i], 2);

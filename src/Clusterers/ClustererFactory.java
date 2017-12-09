@@ -6,6 +6,11 @@ import Clusterers.DBSCAN.DBSCAN;
 import Clusterers.KMeans.KMeans;
 import Clusterers.ParticleSwarmOptimization.PSOClusterer;
 
+/**
+ * Factory handles creation of Clusterer instances and centralizes tunable parameters to allow for simplified
+ * modification of the parameters each algorithm uses. Uses the ClustererType enum to build an IDataClusterer of
+ * the requested type using the parameters stored here.
+ */
 public class ClustererFactory {
 
     /* Universal Parameters */

@@ -39,16 +39,19 @@ public class KMeans implements IDataClusterer {
             clustering = Utilities.assignPointsToClusters(dataset, currentCentroids);
             currentCentroids = clustering.getCentroids();
             iteration++;
-        //    System.out.println("Quality: " + clustering.evaluateFitness());
+            System.out.println("Quality: " + clustering.evaluateFitness());
         } while (shouldContinue(iteration, clustering, oldClustering));
-    //    System.out.println("Num iterations: " + iteration);
+        System.out.println("Num iterations: " + iteration);
 
         return clustering;
     }
 
-    // Determine if the algorithm should stop
+    /**
+     * Return true until either the current and old clusterings have not updated or the
+     * maximum number of iterations has been reached.
+     */
     private boolean shouldContinue(int iteration, Clustering clustering, Clustering oldClustering) {
-        return /*!Objects.deepEquals(clustering, oldClustering) && */iteration < 50;
+        return !Objects.deepEquals(clustering, oldClustering) && iteration < 50;
     }
 
     @Override

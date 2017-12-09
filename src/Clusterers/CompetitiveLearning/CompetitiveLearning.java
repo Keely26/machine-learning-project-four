@@ -6,6 +6,11 @@ import Utilites.Utilities;
 
 import java.util.*;
 
+/**
+ * A single layer competitive neural network, an SOM
+ *
+ * @author Karen Stengel
+ */
 public class CompetitiveLearning implements IDataClusterer {
 
     private final double learningRate;
@@ -22,33 +27,52 @@ public class CompetitiveLearning implements IDataClusterer {
         // Initialize network
         initializeNetwork(dataset);
 
+        Clustering clustering = null;
+        Clustering oldClustering;
         int iteration = 0;
         do {
+            oldClustering = clustering;
+            // Update the network for every example in the dataset
             dataset.forEach(example -> example.setCluster(updateNetwork(example.features)));
-            System.out.println("Quality: " + buildClustering(dataset).evaluateFitness());
+
+            // Evaluate performance
+            clustering = buildClustering(dataset);
+            System.out.println("Quality: " + clustering.evaluateFitness());
             iteration++;
-        } while (shouldContinue(iteration));
+        } while (shouldContinue(iteration, clustering, oldClustering));
 
         return buildClustering(dataset);
     }
 
-    // Todo: convergence detection
-    private boolean shouldContinue(int iteration) {
-        return iteration < 1000;
+    /**
+     * Return true until either the current and old clusterings have not updated or the
+     * maximum number of iterations has been reached.
+     */
+    private boolean shouldContinue(int iteration, Clustering clustering, Clustering oldClustering) {
+        return !Objects.deepEquals(clustering, oldClustering) && iteration < 1000;
     }
 
+    /**
+     * Uses the current centroids of the neurons to assign a clustering for the provided dataset
+     */
     private Clustering buildClustering(Dataset dataset) {
         Clustering clustering = new Clustering();
+        // Create clusters
         for (int i = 0; i < this.numClusters; i++) {
             clustering.add(new Cluster(i));
         }
 
+        // Assign according to cluster ID
         for (Datum datum : dataset) {
             clustering.get(datum.getCluster()).add(datum);
         }
+
         return clustering;
     }
 
+    /**
+     * Given an example data point, finds the most similar output neuron and adjusts the centroid of that neuron
+     */
     private int updateNetwork(double[] example) {
         // Identify best output
         Neuron winner = null;

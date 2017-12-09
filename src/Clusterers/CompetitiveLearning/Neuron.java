@@ -2,12 +2,15 @@ package Clusterers.CompetitiveLearning;
 
 import java.util.Arrays;
 
+/**
+ * Neuron class stores a cluster centroid and index to be used with the Competitive Learning Network clusterer
+ */
 public class Neuron {
 
     private final int clusterIndex;
     private double[] centroid;
 
-    public Neuron(int clusterIndex, double[] centroid) {
+    Neuron(int clusterIndex, double[] centroid) {
         this.clusterIndex = clusterIndex;
         this.centroid = centroid;
     }

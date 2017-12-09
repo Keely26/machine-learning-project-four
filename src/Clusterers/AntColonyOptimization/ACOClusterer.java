@@ -7,6 +7,14 @@ import Utilites.Utilities;
 
 import java.util.*;
 
+/**
+ * Implementation of Ant Colony Optimization to cluster data
+ * Ants translate the problem from the N dimensional solution space to a two dimensional space by using a 2D grid
+ * Ants move data points around the grid and use kMeans to cluster in the 2D space, then transform the results back into
+ * the original solution space.
+ *
+ * @author Keely Weisbeck
+ */
 public class ACOClusterer implements IDataClusterer {
 
     private final int numAnts, gridSize, numClusters;
@@ -54,14 +62,14 @@ public class ACOClusterer implements IDataClusterer {
                 move(grid, currentAnt);
             }
 
-           avgFitness += grid.buildClustering(numClusters).evaluateFitness();
+            avgFitness += grid.buildClustering(numClusters).evaluateFitness();
 
+            // Logging
             if (iteration % 100 == 0) {
                 //printStats(grid, ants);
                 //System.out.println(grid.buildClustering(numClusters).evaluateFitness());
                 avgFitness /= 100;
                 System.out.println(avgFitness);
-                printStats(grid, ants);
                 avgFitness = 0;
             }
 
@@ -72,22 +80,16 @@ public class ACOClusterer implements IDataClusterer {
         return grid.buildClustering(numClusters);
     }
 
-    private void printStats(Grid grid, List<Ant> ants) {
-        System.out.println("Points on Grid: " + grid.checkNumDataPoints());
-        int count = 0;
-        for (Ant ant : ants) {
-            if (ant.isCarrying()) {
-                count++;
-            }
-        }
-        System.out.println("Points on Ants: " + count);
-    }
-
-
+    /**
+     * Return true until either the maximum number of iterations has been reached.
+     */
     private boolean shouldContinue(int iteration) {
         return iteration < 10000;
     }
 
+    /**
+     * Ants move one space in a random direction, if there is a valid movement that can be made
+     */
     private void move(Grid grid, Ant ant) {
         GridLocation antLocation = ant.getLocation();
         List<Integer> moves = new ArrayList<>(Arrays.asList(1, 2, 3, 4));
@@ -97,7 +99,7 @@ public class ACOClusterer implements IDataClusterer {
             int move = moves.remove(0);
             GridLocation newLocation = new GridLocation(antLocation.x, antLocation.y);
             switch (move) {
-                case 1: // Up
+                case 1: // Try to move up
                     newLocation.y++;
                     if (grid.isUnoccupied(newLocation)) {
                         ant.setLocation(newLocation);
@@ -105,7 +107,7 @@ public class ACOClusterer implements IDataClusterer {
                         return;
                     }
                     break;
-                case 2: // Down
+                case 2: // Try to move down
                     newLocation.y--;
                     if (grid.isUnoccupied(newLocation)) {
                         ant.setLocation(newLocation);
@@ -113,7 +115,7 @@ public class ACOClusterer implements IDataClusterer {
                         return;
                     }
                     break;
-                case 3: // Right
+                case 3: // Try to move right
                     newLocation.x++;
                     if (grid.isUnoccupied(newLocation)) {
                         ant.setLocation(newLocation);
@@ -121,7 +123,7 @@ public class ACOClusterer implements IDataClusterer {
                         return;
                     }
                     break;
-                case 4: // Left
+                case 4: // Try to move left
                     newLocation.x--;
                     if (grid.isUnoccupied(newLocation)) {
                         ant.setLocation(newLocation);
@@ -135,11 +137,19 @@ public class ACOClusterer implements IDataClusterer {
         }
     }
 
+    /**
+     * Use parameters and the density of the current region to determine if an ant should pick up the data point
+     * at its current location
+     */
     private boolean shouldPickUp(Ant ant, Grid grid) {
         double density = grid.getDensity(ant, this.radius);
         return Utilities.randomDouble(1) < Math.pow((k1 / (k1 + density)), 2);
     }
 
+    /**
+     * Use parameters and the density of the current region to determine if an ant should drop the data point
+     * at its current location
+     */
     private boolean shouldDrop(Ant ant, Grid grid) {
         if (grid.isValidDrop(ant.getLocation())) {
             double density = grid.getDensity(ant, this.radius);
@@ -149,6 +159,9 @@ public class ACOClusterer implements IDataClusterer {
         }
     }
 
+    /**
+     * Create new army of ants
+     */
     private List<Ant> initializeAnts() {
         List<Ant> ants = new ArrayList<>(this.numAnts);
         for (int i = 0; i < this.numAnts; i++) {
